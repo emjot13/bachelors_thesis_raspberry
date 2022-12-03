@@ -1,7 +1,6 @@
 from scipy.spatial import distance as dist
 from imutils.video import VideoStream
 from imutils import face_utils
-from threading import Thread
 import numpy as np
 import argparse
 import imutils
@@ -9,11 +8,9 @@ import time
 import dlib
 import cv2
 import threading
-from playsound import playsound
-from pynput import keyboard
 from os.path import exists
 from datetime import datetime
-
+from os import remove
 
 def eye_aspect_ratio(eye):  # calculates openness of an eye
     eye_height_line_1 = dist.euclidean(eye[1], eye[5])
@@ -24,7 +21,8 @@ def eye_aspect_ratio(eye):  # calculates openness of an eye
 
 
 def final_ear(shape):
-    (left_eye_start, left_eye_end) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]  # detects the eyes and applies above function
+    (left_eye_start, left_eye_end) = face_utils.FACIAL_LANDMARKS_IDXS[
+        "left_eye"]  # detects the eyes and applies above function
     (right_eye_start, right_eye_end) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
     left_eye = shape[left_eye_start:left_eye_end]
     right_eye = shape[right_eye_start:right_eye_end]
@@ -60,17 +58,6 @@ def camera(frame, eye, gray, rect, predictor, ear):  # enables real-time view fr
     cv2.imshow("Fatigue detector", frame)
 
 
-def alarm(filepath):  # plays sound alarm
-    playsound(filepath)
-
-
-def on_press(key, abort_key='esc'):
-    try:
-        key = key.char
-    except AttributeError:
-        key = key.name
-    if key == abort_key:
-        return False
 
 
 def save_to_file(filepath, data):
@@ -83,30 +70,17 @@ def save_to_file(filepath, data):
         f.write(data + "\n")
 
 
-def get_args():  # gets arguments from command line flags
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-r", "--rounds", help="number of times program will run", type=int, default=3)
-    parser.add_argument("-s", "--seconds", help="seconds for one cycle", type=int, default=30)
-    parser.add_argument("-v", "--verbose", help="Verbose output", action="store_true")
-    parser.add_argument("-a", "--audio", help="Audio output", action="store_true")
-    parser.add_argument("-c", "--closed_eyes_seconds_threshold",
-                        help="Time after which closed eyes are counted as sleeping", type=int, default=3)
-    parser.add_argument("-f", "--FPS", help="Frames per second", type=int, default=24)
-    parser.add_argument("-e", "--e_a_r", help="eye aspect ratio", type=float, default=0.2)
-    parser.add_argument("-y", "--yawn_threshold", help="yawn threshold", type=float, default=20.0)
-    parser.add_argument("-t", "--time_limit", help="if time limit is to be applied", action="store_false")
-    parser.add_argument("-file", '--filepath', help="path to the file to write to")
-    arguments = parser.parse_args()
-    return arguments.__dict__
+
 
 
 def fatigue_detector(seconds, verbose, audio, closed_eyes_seconds_threshold, FPS, e_a_r, yawn_threshold, time_limit,
                      filepath):  # main detecting function
+    print("started fatique analysis")
     default_thread_number = threading.active_count()
     closed_eyes_threshold_fps = closed_eyes_seconds_threshold * FPS
     sleeping_counter, yawning_counter, frame_counter = 0, 0, 0
-    detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-    predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+    detector = cv2.CascadeClassifier("/home/pi/project/ai/haarcascade_frontalface_default.xml")
+    predictor = dlib.shape_predictor("/home/pi/project/ai/shape_predictor_68_face_landmarks.dat")
     vs = VideoStream(framerate=FPS).start()  # starts video
     time.sleep(1)
     yawn, sleep, multiple_threads = False, False, False
@@ -114,10 +88,12 @@ def fatigue_detector(seconds, verbose, audio, closed_eyes_seconds_threshold, FPS
     date = datetime.now().replace(microsecond=0)
     timeout = starting_time + seconds
     while True:
+        if check_logical_files():
+            vs.stop()
+            break
         frame = imutils.resize(vs.read(), width=450)
         to_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        rects = detector.detectMultiScale(to_gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30),
-                                          flags=cv2.CASCADE_SCALE_IMAGE)
+        rects = detector.detectMultiScale(to_gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
         for (x, y, w, h) in rects:
             rect = dlib.rectangle(int(x), int(y), int(x + w), int(y + h))
             shape = face_utils.shape_to_np(predictor(to_gray, rect))
@@ -129,58 +105,52 @@ def fatigue_detector(seconds, verbose, audio, closed_eyes_seconds_threshold, FPS
                 frame_counter = 0
                 sleep = False
             elif ear < e_a_r:
+                print("closed eyes")
                 frame_counter += 1
                 if frame_counter >= closed_eyes_threshold_fps:
-                    if audio and threading.active_count() < default_thread_number + 2:
-                        multiple_threads = True
-                        new_thread = Thread(target=playsound, args=('hello_there.mp3',))
-                        new_thread.start()
-                    cv2.putText(frame, "WAKE UP!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     sleep = True
             if not sleep and distance > yawn_threshold:
-                cv2.putText(frame, "FATIGUE ALERT", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                 yawn = True
+                print("Yawning")
             elif yawn and distance < yawn_threshold:
                 yawn = False
                 yawning_counter += 1
             if verbose:
                 camera(frame, eye, to_gray, rect, predictor, ear)
-
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('z'):
-            if multiple_threads:
-                new_thread.join()
-            cv2.destroyAllWindows()
-            vs.stop()
-            exit(0)
-        if key == ord("q") or (time_limit and time.time() > timeout):
-            if multiple_threads:
-                new_thread.join()
-            cv2.destroyAllWindows()
-            vs.stop()
             if filepath is not None:
                 to_write = f' {date.strftime("%m/%d/%Y")}, {date.strftime("%H:%M:%S")},' \
                            f' {datetime.now().replace(microsecond=0).strftime("%H:%M:%S")},' \
                            f' {yawning_counter}, {sleeping_counter} '
                 save_to_file(filepath, to_write)
-            print(f"In the last {round(time.time() - starting_time)} seconds you've yawned: {yawning_counter} "
-                  f"times and had your eyes closed for longer than "
-                  f"{closed_eyes_seconds_threshold} seconds {sleeping_counter} times")
-            exit(0)
+            # print(f"In the last {round(time.time() - starting_time)} seconds you've yawned: {yawning_counter} "
+            #       f"times and had your eyes closed for longer than "
+            #       f"{closed_eyes_seconds_threshold} seconds {sleeping_counter} times")
 
 
-def main(args):
-    for _ in range(args['rounds']):
-        fatigue_detector(args['seconds'], args['verbose'], args['audio'], args['closed_eyes_seconds_threshold'],
+
+def check_logical_files():
+    pause = "logical_files/pause"
+    end = "logical_files/end"
+    if exists(pause):
+        remove(pause)
+        return "pause"
+    if exists(end):
+        remove(end)
+        return "end"
+
+
+def run(args):
+    fatigue_detector(args['seconds'], args['verbose'], args['audio'], args['closed_eyes_seconds_threshold'],
                          args['FPS'], args['e_a_r'], args['yawn_threshold'], args['time_limit'], args['filepath'])
 
 
+def run_no_cmd():
+    fatigue_detector(30, False, False, 3, 24, 0.2, 10, False, None)
+
+
+def main():
+    run_no_cmd()
+
+
 if __name__ == '__main__':
-    cmd_args = get_args()
-    if not cmd_args['verbose']:
-        listener = keyboard.Listener(on_press=lambda event: on_press(event, abort_key='esc'))
-        listener.start()
-        Thread(target=main, args=(cmd_args,), name='main', daemon=True).start()
-        listener.join()
-    else:
-        main(cmd_args)
+    main()
