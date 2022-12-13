@@ -9,7 +9,6 @@ import threading
 
 
 
-
 def start(request):
     if request.method == "POST":
         m = threading.Thread(target = main)
