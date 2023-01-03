@@ -1,20 +1,29 @@
 import pymongo
+from datetime import datetime
 
-PORT = 2000
+PORT = 27017
 DATABASE_NAME = "user_data"
 COLLECTION_NAME = "fatigue"
-USER_ID = 0
 
-client = pymongo.MongoClient(f"mongodb+srv://pi:raspberry@cluster0.xify2pw.mongodb.net/{DATABASE_NAME}")
+client = pymongo.MongoClient(f"mongodb://localhost:{PORT}")
 database = client[DATABASE_NAME]
 fatigue_collection = database[COLLECTION_NAME]
 
-fatigue_collection.insert_one({"id": USER_ID, "yawning": 0, "sleep": 0})
+# fatigue_collection.insert_one({"id": USER_ID, "yawning": 0, "sleep": 0})
 
 
 
 
-def insert_data(data):
-    fatigue_collection.update_one({"id": USER_ID}, {"$set": data})
+def insert_data(yawns, sleep):
+    date = datetime.now().replace(microsecond=0)
+    fatigue_collection.insert_one({"day": date, "yawns": yawns, "sleep": sleep})
     print("INSERTED")
     print("---------------------------------")
+
+
+
+
+def get_all_data():
+    data = fatigue_collection.find({})
+    return list(data)
+

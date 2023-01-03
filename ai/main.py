@@ -18,15 +18,15 @@ import threading
 class FatigueDetector:
 
     def __init__(self):
-        self.DETECTOR = cv2.CascadeClassifier("/home/pi/fatigue-project/ai/haarcascade_frontalface_default.xml") 
-        self.PREDICTOR = dlib.shape_predictor("/home/pi/fatigue-project/ai/shape_predictor_68_face_landmarks.dat") 
+        self.DETECTOR = cv2.CascadeClassifier("/home/pi/final_project/ai/haarcascade_frontalface_default.xml") 
+        self.PREDICTOR = dlib.shape_predictor("/home/pi/final_project/ai/shape_predictor_68_face_landmarks.dat") 
         self.yawning_counter, self.sleeping_counter = 0, 0
 
 
     def write_to_database_every_x_seconds(self, seconds):
         while True:
             time.sleep(seconds)
-            database.insert_data({"yawning": self.yawning_counter, "sleep": self.sleeping_counter})
+            database.insert_data(self.yawning_counter, self.sleeping_counter)
 
 
     @staticmethod
