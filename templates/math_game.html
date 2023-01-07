@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Math Game</title>
+</head>
+<body>
+  <div id="btn1">
+  <p>Twoje liczby to: <span id="num1"></span> i <span id="num2"></span>.</p>
+  <form>
+    <label>Podaj sumę tych liczb:</label>
+    <input type="number" id="answer1" required>
+    <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+  </form>
+  <p id="result1"></p>
+  </div> 
+  <br>
+  <div id="btn2" style="display: none;">
+    <p>Twoje liczby to: <span id="num3"></span> i <span id="num4"></span>.</p>
+    <form>
+      <label>Podaj sumę tych liczb:</label>
+      <input type="number" id="answer2" required>
+      <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+    </form>
+    <p id="result2"></p>
+  </div> 
+  <br>
+  <div id="btn3" style="display: none;">
+      <p>Twoje liczby to: <span id="num5"></span> i <span id="num6"></span>.</p>
+      <form>
+        <label>Podaj sumę tych liczb:</label>
+        <input type="number" id="answer3" required>
+        <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+      </form>
+      <p id="result3"></p>
+  </div> 
+  <br>
+  <div id="btn4" style="display: none;">
+    <p>Twoje liczby to: <span id="num7"></span> i <span id="num8"></span>.</p>
+    <form>
+      <label>Podaj sumę tych liczb:</label>
+      <input type="number" id="answer4" required>
+      <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+    </form>
+    <p id="result4"></p>
+  </div> 
+  <br>
+  <div id="btn5" style="display: none;">
+    <p>Twoje liczby to: <span id="num9"></span> i <span id="num10"></span>.</p>
+    <form>
+      <label>Podaj sumę tych liczb:</label>
+      <input type="number" id="answer5" required>
+      <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+    </form>
+    <p id="result5"></p>
+  </div> 
+  <br>
+  <h4 id="score"></h4>
+
+  <script>
+    //mozna dodać czas odpowiedzi
+    var rand_nums = []
+    var correct_answers = []
+    var answer_num = 1
+    var good_answers = 0
+    for (let i = 1; i < 11; i++) {
+        const rand = Math.floor(Math.random() * 100) + 15;
+        rand_nums.push(rand);
+        document.getElementById("num"+i).innerHTML = rand;
+    }
+    for (let i = 0; i < 5; i++) {
+        correct_answers.push(rand_nums[2*i] + rand_nums[2*i + 1])
+    }
+
+    function checkAnswer() {
+      var answer = document.getElementById("answer"+answer_num).value;
+      if (answer == correct_answers[answer_num -1]) {
+        document.getElementById("result"+[answer_num]).innerHTML = "Correct!";
+        good_answers++
+      } else {
+        document.getElementById("result"+[answer_num]).innerHTML = "Incorrect. The correct answer is " + correct_answers[answer_num - 1] + ".";
+      }
+      //Jesli wszystkie odpowiedzi zostały udzielone to v
+      if (answer_num > 4){
+        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5";
+        document.getElementById("score").style.display = "inline-block";
+        //zrób coś z good_answers/5
+      }
+      document.getElementById("btn" + (answer_num+1)).style.display = "inline-block";
+      answer_num++;
+    }
+  </script>
+</body>
+</html>

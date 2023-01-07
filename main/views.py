@@ -59,3 +59,11 @@ def tiredness(request):
 }
     }
     return render(request, 'tiredness_stats.html', context)
+
+#-----------------------GAMES------------------------
+
+def games(request):
+    return render(request, 'games.html')
+
+def mathgame(request):
+    return render(request, 'math_game.html')

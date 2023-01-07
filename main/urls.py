@@ -7,4 +7,6 @@ urlpatterns = [
     path("shutdown", views.shutdown, name="shutdown"),
     path("pause", views.pause, name="pause"),
     path('tiredness', views.tiredness, name='tiredness'),
+    path('games', views.games, name='games'),
+    path('mathgame', views.mathgame, name='mathgame'),
 ]
