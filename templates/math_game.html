@@ -4,7 +4,11 @@
   <title>Math Game</title>
 </head>
 <body>
-  <div id="btn1">
+  <div id="btn0">
+    <p>Gotowy na dodawanie liczb?</p>
+    <button id="btnstart" type="button" onclick="start()">Start!</button>
+  </div>
+  <div id="btn1" style="display: none;">
   <p>Twoje liczby to: <span id="num1"></span> i <span id="num2"></span>.</p>
   <form>
     <label>Podaj sumę tych liczb:</label>
@@ -57,11 +61,13 @@
   <h4 id="score"></h4>
 
   <script>
-    //mozna dodać czas odpowiedzi
     var rand_nums = []
     var correct_answers = []
     var answer_num = 1
     var good_answers = 0
+    var start_time = new Date();
+    var end_time = new Date();
+    var times = []
     for (let i = 1; i < 11; i++) {
         const rand = Math.floor(Math.random() * 100) + 15;
         rand_nums.push(rand);
@@ -70,23 +76,33 @@
     for (let i = 0; i < 5; i++) {
         correct_answers.push(rand_nums[2*i] + rand_nums[2*i + 1])
     }
+    function start() {
+      document.getElementById("btn0").style.display = "none";
+      document.getElementById("btn1").style.display = "inline-block";
+      start_time = new Date()
+    }
 
     function checkAnswer() {
       var answer = document.getElementById("answer"+answer_num).value;
+      var time = new Date()
+      end_time = time
+      times.push((end_time - start_time) / 1000)
+      start_time = time
       if (answer == correct_answers[answer_num -1]) {
-        document.getElementById("result"+[answer_num]).innerHTML = "Correct!";
+        document.getElementById("result"+[answer_num]).innerHTML = "Dobrze!"+"Twój czas to: "+times[answer_num -1]+"s";
         good_answers++
       } else {
-        document.getElementById("result"+[answer_num]).innerHTML = "Incorrect. The correct answer is " + correct_answers[answer_num - 1] + ".";
+        document.getElementById("result"+[answer_num]).innerHTML = "Źle. Poprawna odpowiedź to: " + correct_answers[answer_num - 1]+" Twój czas to: "+times[answer_num -1]+"s";
       }
       //Jesli wszystkie odpowiedzi zostały udzielone to v
       if (answer_num > 4){
-        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5";
+        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5"+ ". Średni czas: "+times.reduce((a, b) => a + b, 0)/times.length;
         document.getElementById("score").style.display = "inline-block";
         //zrób coś z good_answers/5
+      } else{
+        document.getElementById("btn" + (answer_num+1)).style.display = "inline-block";
+        answer_num++;
       }
-      document.getElementById("btn" + (answer_num+1)).style.display = "inline-block";
-      answer_num++;
     }
   </script>
 </body>
