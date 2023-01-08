@@ -10,50 +10,50 @@
   </div>
   <div id="btn1" style="display: none;">
   <p>Twoje liczby to: <span id="num1"></span> i <span id="num2"></span>.</p>
-  <form>
+  <form onkeypress="return event.keyCode != 13">
     <label>Podaj sumę tych liczb:</label>
     <input type="number" id="answer1" required>
-    <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+    <button id="b1" type="button" onclick="checkAnswer()">Zatwierdź</button>
   </form>
   <p id="result1"></p>
   </div> 
   <br>
   <div id="btn2" style="display: none;">
     <p>Twoje liczby to: <span id="num3"></span> i <span id="num4"></span>.</p>
-    <form>
+    <form onkeypress="return event.keyCode != 13">
       <label>Podaj sumę tych liczb:</label>
       <input type="number" id="answer2" required>
-      <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+      <button id="b2" type="button" onclick="checkAnswer()">Zatwierdź</button>
     </form>
     <p id="result2"></p>
   </div> 
   <br>
   <div id="btn3" style="display: none;">
       <p>Twoje liczby to: <span id="num5"></span> i <span id="num6"></span>.</p>
-      <form>
+      <form onkeypress="return event.keyCode != 13">
         <label>Podaj sumę tych liczb:</label>
         <input type="number" id="answer3" required>
-        <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+        <button id="b3" type="button" onclick="checkAnswer()">Zatwierdź</button>
       </form>
       <p id="result3"></p>
   </div> 
   <br>
   <div id="btn4" style="display: none;">
     <p>Twoje liczby to: <span id="num7"></span> i <span id="num8"></span>.</p>
-    <form>
+    <form onkeypress="return event.keyCode != 13">
       <label>Podaj sumę tych liczb:</label>
       <input type="number" id="answer4" required>
-      <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+      <button id="b4" type="button" onclick="checkAnswer()">Zatwierdź</button>
     </form>
     <p id="result4"></p>
   </div> 
   <br>
   <div id="btn5" style="display: none;">
     <p>Twoje liczby to: <span id="num9"></span> i <span id="num10"></span>.</p>
-    <form>
+    <form onkeypress="return event.keyCode != 13">
       <label>Podaj sumę tych liczb:</label>
       <input type="number" id="answer5" required>
-      <button type="button" onclick="checkAnswer()">Zatwierdź</button>
+      <button id="b5" type="button" onclick="checkAnswer()">Zatwierdź</button>
     </form>
     <p id="result5"></p>
   </div> 
@@ -61,13 +61,13 @@
   <h4 id="score"></h4>
 
   <script>
-    var rand_nums = []
-    var correct_answers = []
-    var answer_num = 1
-    var good_answers = 0
-    var start_time = new Date();
-    var end_time = new Date();
-    var times = []
+    let rand_nums = []
+    let correct_answers = []
+    let answer_num = 1
+    let good_answers = 0
+    let start_time = new Date();
+    let end_time = new Date();
+    let times = []
     for (let i = 1; i < 11; i++) {
         const rand = Math.floor(Math.random() * 100) + 15;
         rand_nums.push(rand);
@@ -83,24 +83,26 @@
     }
 
     function checkAnswer() {
-      var answer = document.getElementById("answer"+answer_num).value;
-      var time = new Date()
+      let answer = document.getElementById("answer"+answer_num).value;
+      let time = new Date()
       end_time = time
       times.push((end_time - start_time) / 1000)
       start_time = time
       if (answer == correct_answers[answer_num -1]) {
-        document.getElementById("result"+[answer_num]).innerHTML = "Dobrze!"+"Twój czas to: "+times[answer_num -1]+"s";
+        document.getElementById("result"+[answer_num]).innerHTML = "Dobrze!"+"Twój czas to: "+times[answer_num -1].toFixed(2)+"s";
         good_answers++
       } else {
-        document.getElementById("result"+[answer_num]).innerHTML = "Źle. Poprawna odpowiedź to: " + correct_answers[answer_num - 1]+" Twój czas to: "+times[answer_num -1]+"s";
+        document.getElementById("result"+[answer_num]).innerHTML = "Źle. Poprawna odpowiedź to: " + correct_answers[answer_num - 1]+" Twój czas to: "+times[answer_num -1].toFixed(2)+"s";
       }
       //Jesli wszystkie odpowiedzi zostały udzielone to v
       if (answer_num > 4){
-        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5"+ ". Średni czas: "+times.reduce((a, b) => a + b, 0)/times.length;
+        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5"+ ". Średni czas: "+(times.reduce((a, b) => a + b, 0)/times.length).toFixed(2)+"s";
+        document.getElementById("b" + (answer_num)).style.display = "none";
         document.getElementById("score").style.display = "inline-block";
         //zrób coś z good_answers/5
       } else{
         document.getElementById("btn" + (answer_num+1)).style.display = "inline-block";
+        document.getElementById("b" + (answer_num)).style.display = "none";
         answer_num++;
       }
     }
