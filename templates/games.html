@@ -5,7 +5,14 @@
                 {% csrf_token %}
 
                 <div>
-                        <button style="font-size: 1.3em" type="submit">First Game</button>
+                        <button style="font-size: 1.3em" type="submit">Math Game</button>
+                </div>
+        </form>
+        <form action="memorygame" method="GET">
+                {% csrf_token %}
+
+                <div>
+                        <button style="font-size: 1.3em" type="submit">Memory Game</button>
                 </div>
         </form>
 </div>

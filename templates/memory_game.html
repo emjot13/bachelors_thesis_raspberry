@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: 445px;
+      height: 445px;
+      margin: 0 auto;
+      background-color: #fff;
+    }
+    .game-card {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(160, 160, 160);
+      border: 2px solid #000;
+      font-size: 48px;
+      text-align: center;
+      line-height: 100px;
+      color: #fff;
+    }
+    .game-card.matched {
+      background-color: rgb(32, 250, 138);
+    }
+    .game-card.flipped {
+      background-color: rgb(46, 46, 254);
+    }
+  </style>
+</head>
+<body>
+    <form action="games" method="GET">{% csrf_token %}<div><button style="font-size: 1.3em" type="submit">Wróć</button></div></form>
+  <div class="game-board">
+    <!-- Game cards go here -->
+  </div>
+  <script>
+    const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'];
+    cards.sort(() => Math.random() - 0.5);
+    const gameBoard = document.querySelector('.game-board');
+    // Create the game cards
+    for (let card of cards) {
+      // Create the card element
+      const gameCard = document.createElement('div');
+      gameCard.classList.add('game-card');
+      gameCard.innerText = card;
+      gameCard.style.fontSize = 0;
+      gameCard.addEventListener('click', function() {
+        if (gameCard.classList.contains('flipped') || gameCard.classList.contains('matched')) {
+          return;
+        }
+        // Flip the card
+        gameCard.classList.add('flipped');
+        gameCard.style.fontSize = "xx-large";
+        const flippedCards = document.querySelectorAll('.flipped');
+
+        if (flippedCards.length === 2) {
+            const AllCards = document.querySelectorAll('.game-card');
+            for (let one of AllCards){
+                one.style.pointerEvents = "none";
+            }
+          if (flippedCards[0].innerText === flippedCards[1].innerText) {
+            flippedCards[0].classList.add('matched');
+            flippedCards[1].classList.add('matched');
+          }
+
+          setTimeout(function() {
+            flippedCards[0].classList.remove('flipped');
+            if (!flippedCards[0].classList.contains('matched')){
+                flippedCards[0].style.fontSize = 0;
+            }
+            flippedCards[1].classList.remove('flipped');
+            if (!flippedCards[1].classList.contains('matched')){
+                flippedCards[1].style.fontSize = 0;
+            }
+            for (let one of AllCards){
+                one.style.pointerEvents = "auto";
+            }
+          }, 1000);
+        }
+      });
+      gameBoard.appendChild(gameCard);
+    }
+  </script>
+</body>
+</html>

@@ -67,3 +67,6 @@ def games(request):
 
 def mathgame(request):
     return render(request, 'math_game.html')
+
+def memorygame(request):
+    return render(request, 'memory_game.html')
