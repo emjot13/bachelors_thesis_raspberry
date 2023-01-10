@@ -29,16 +29,24 @@ def pause(request):
     
     return redirect(start)
 
-items = [
-    {"day": '11-02-2022', "yawns": 5, "sleep": 10}, {"day": '12-02-2022', "yawns": 4, "sleep": 8}, {"day": '13-02-2022', "yawns": 11, "sleep": 14},
-    {"day": '11-02-2022', "yawns": 5, "sleep": 10}, {"day": '12-02-2022', "yawns": 4, "sleep": 8}, {"day": '13-02-2022', "yawns": 11, "sleep": 14},
-    {"day": '11-02-2022', "yawns": 5, "sleep": 10}, {"day": '12-02-2022', "yawns": 4, "sleep": 8}, {"day": '13-02-2022', "yawns": 11, "sleep": 14},
- ]
 
+
+def lifestyle(request):
+    if request.method == "GET":
+        return render(request, "lifestyle_analysis.html")
+    if request.method == "POST":
+        start_date = request.POST.get("start")
+        end_date = request.POST.get("end")
+        # print("---------------")
+        # print(type(start_date), start_date, end_date)
+        # print("---------------")
+        data = database.find_data_in_date_range(start_date, end_date)
+        # print(data)
+        return render(request, "lifestyle_analysis.html", {"data": data})
 
 
 def tiredness(request):
-    data = database.get_all_data()
+    # data = database.get_all_data()
     # print(data, type(data))
     labels = [item['day'].strftime("%m/%d/%Y, %H:%M:%S") for item in data]
     # old_days = [item['day'] for item in items]

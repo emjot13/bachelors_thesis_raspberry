@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Example Template</title>
+  </head>
+  <body>
+
+
+    <h1>Lifestyle analysis</h1>
+
+    <form action="lifestyle" method="POST">
+        {% csrf_token %}
+
+        <div>
+
+            <label for="start">Start date:</label>
+
+            <input type="date" name="start">
+
+        </div>
+
+        <div>
+
+            <label for="end">End date:</label>
+
+            <input type="date" name="end">
+
+        </div>
+
+        <div>
+                <button style="font-size: 1.3em" type="submit">Send</button>
+        </div>
+</form>
+
+{% if data %}
+<hr>
+{% for day in data %}
+
+<div>
+    <h2>Day: {{ day.day }}</h2>
+    <h3>Total yawns: {{ day.total_yawns}} </h3>
+    <h3>Average yawns per hour: {{ day.avg_yawns_per_hour }}</h3>
+
+    <h3>Total sleep: {{ day.total_sleep }}</h3>
+    <h3>Average sleep per hour: {{ day.avg_sleep_per_hour }}</h3>
+
+
+    <h3>You started work at: {{ day.start_time }}</h3>
+    <h3>You finished work at: {{ day.end_time }}</h3>
+
+    <div>
+      <h2>Hourly statistics</h2>
+      {% for hour_data in day.hours %}
+      <ul>
+     <li>Sleep till {{ hour_data.hour|add:"1" }}: {{ hour_data.sleep }} </li> 
+      <li>Yawns till {{ hour_data.hour|add:"1" }}: {{ hour_data.yawns }} </li> 
+      <li> Sleep between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_sleep }}</li>
+      <li>Yawns between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_yawns }}</li>
+     
+      
+      </ul>
+      {% endfor %}
+    </div>
+
+</div>
+<hr>
+{% endfor %}
+
+
+{% endif %}
+
+
+  </body>
+</html>
