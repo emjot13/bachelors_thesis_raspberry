@@ -31,8 +31,6 @@ def get_all_data():
 
 
 def generate_mock_data():
-    # date = datetime.now().replace(microsecond=0)
-    yawns_list = []
     start_date = '01/01/20 08:00:00'
     end_date = '12/31/20 16:00:00'
     start_date = datetime.strptime(start_date, '%m/%d/%y %H:%M:%S')
@@ -44,7 +42,6 @@ def generate_mock_data():
     with open("mock_data.txt", "w") as f:
         for day in range(start_date_ts, end_date_ts, 3600 * 24):
             fatigue = rd.randint(97, 98) / 100
-            # print(datetime.fromtimestamp(day))
 
             sleep, yawns = 0, 0
             for working_hours in range(day, day + 3600 * 8 + 1, 10):
@@ -58,12 +55,8 @@ def generate_mock_data():
                         sleep += 1
                     if 0.9 <= chance1 < 1:
                         yawns += 1
-                # print(datetime.fromtimestamp(working_hours))
-            # print(yawns, sleep)
-
                 f.write(f"{datetime.fromtimestamp(working_hours)}, {yawns}, {sleep}\n")
-            # yawns_list.append(yawns)
-    # print(max(yawns_list), min(yawns_list))
+
 
 def populate_database_with_mock_data():
     with open("mock_data.txt", "r") as f:
@@ -80,4 +73,20 @@ def populate_database_with_mock_data():
 
 
 # generate_mock_data()
-populate_database_with_mock_data()
+# populate_database_with_mock_data()
+
+def find_data_by_day(day):
+    start_date = '12/31/20 08:00:00'
+    end_date = '12/31/20 17:00:00'
+    start_date = datetime.strptime(start_date, '%m/%d/%y %H:%M:%S')
+    end_date = datetime.strptime(end_date, '%m/%d/%y %H:%M:%S')
+
+    query = {"day": {"$gte": start_date, "$lt": end_date}}
+    import time
+    start = time.time()
+    docs = fatigue_collection.find(query)
+    end = time.time()
+    print(end - start)
+    return docs
+
+find_data_by_day("2020-01-01")
