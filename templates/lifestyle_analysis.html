@@ -2,15 +2,21 @@
 <html lang="en">
   <head>
     <title>Example Template</title>
+    <style>
+    input {width: 100%; margin-bottom: 1em;}
+      </style>
   </head>
   <body>
 
-
+    <div style="display: flex; justify-content: center;">
     <h1>Lifestyle analysis</h1>
-
+  </div>
     <form action="lifestyle" method="POST">
         {% csrf_token %}
 
+        <div id="form" style="display: flex; justify-content: space-between;">
+
+        <div id="left-form" style="margin-left: 5em;">
         <div>
 
             <label for="start">Start date:</label>
@@ -26,17 +32,87 @@
             <input type="date" name="end">
 
         </div>
+        </div>
+
+        <div id="right-form" style="margin-right: 5em;">
 
         <div>
+
+          <label for="start1">Start date1:</label>
+
+          <input type="date" name="start1">
+
+      </div>
+
+      <div>
+
+          <label for="end1">End date1:</label>
+
+          <input type="date" name="end1">
+
+      </div>
+
+    </div>
+
+    </div>
+
+        <div style="display: flex; justify-content: center;">
                 <button style="font-size: 1.3em" type="submit">Send</button>
         </div>
 </form>
 
 {% if data %}
 <hr>
-{% for day in data %}
 
-<div>
+<div style="display: flex; justify-content: center;">
+
+  <h1>Summary</h1>
+
+
+</div>
+
+<div style="display: flex; justify-content: space-around; margin-bottom: 4em;">
+
+<div style="margin-left: 5em;">
+  <h2>
+    Between {{ summary.first.start }} - {{summary.first.end}}
+
+  </h2>
+<h3>    Total sleep: {{ summary.first.total_sleep}}</h3>
+<h3>    Total yawns: {{ summary.first.total_yawns }}</h3>
+<h3>    Average sleep per day: {{ summary.first.average_sleep}}</h3>
+<h3>    Average yawns per day: {{ summary.first.average_yawns}}</h3>
+
+
+
+
+</div>
+
+<div style="margin-right: 5em;">
+
+  <h2>
+    Between {{ summary.second.start }} - {{summary.second.end}}
+
+  </h2>
+<h3>    Total sleep: {{ summary.second.total_sleep}}</h3>
+<h3>    Total yawns: {{ summary.second.total_yawns }}</h3>
+<h3>    Average sleep per day: {{ summary.second.average_sleep}}</h3>
+<h3>    Average yawns per day: {{ summary.second.average_yawns}}</h3>
+
+</div>
+
+
+
+</div>
+
+
+<hr>
+{% for day, day1 in data %}
+
+<div style="display: flex; justify-content: space-between;">
+
+<div style="margin-left: 5em;">
+  <div>
     <h2>Day: {{ day.day }}</h2>
     <h3>Total yawns: {{ day.total_yawns}} </h3>
     <h3>Average yawns per hour: {{ day.avg_yawns_per_hour }}</h3>
@@ -47,20 +123,66 @@
 
     <h3>You started work at: {{ day.start_time }}</h3>
     <h3>You finished work at: {{ day.end_time }}</h3>
+  </div>
+  <div>
+    <details>
 
+    <summary style="font-weight: bold;">
+      Hourly statistics
+    </summary>
+    <ul style="padding: 0;">
+
+    {% for hour_data in day.hours %}
+    <ul style="margin-bottom: 1em;">
+   <li>Sleep till {{ hour_data.hour|add:"1" }}: {{ hour_data.sleep }} </li> 
+    <li>Yawns till {{ hour_data.hour|add:"1" }}: {{ hour_data.yawns }} </li> 
+    <li> Sleep between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_sleep }}</li>
+    <li>Yawns between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_yawns }}</li>
+  </ul>
+    {% endfor %}
+  </ul>
+</details>
+
+  </div>
+  </div>
+
+
+  <div style="margin-right: 5em;">
     <div>
-      <h2>Hourly statistics</h2>
-      {% for hour_data in day.hours %}
-      <ul>
-     <li>Sleep till {{ hour_data.hour|add:"1" }}: {{ hour_data.sleep }} </li> 
-      <li>Yawns till {{ hour_data.hour|add:"1" }}: {{ hour_data.yawns }} </li> 
-      <li> Sleep between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_sleep }}</li>
-      <li>Yawns between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_yawns }}</li>
-     
-      
-      </ul>
-      {% endfor %}
+      <h2>Day: {{ day1.day }}</h2>
+      <h3>Total yawns: {{ day1.total_yawns}} </h3>
+      <h3>Average yawns per hour: {{ day1.avg_yawns_per_hour }}</h3>
+  
+      <h3>Total sleep: {{ day1.total_sleep }}</h3>
+      <h3>Average sleep per hour: {{ day1.avg_sleep_per_hour }}</h3>
+  
+  
+      <h3>You started work at: {{ day1.start_time }}</h3>
+      <h3>You finished work at: {{ day1.end_time }}</h3>
     </div>
+      <div>
+        <details>
+
+        <summary style="font-weight: bold;">
+          Hourly statistics
+        </summary>
+        <ul style="padding: 0;">
+
+        {% for hour_data in day1.hours %}
+        <ul style="margin-bottom: 1em;">
+       <li>Sleep till {{ hour_data.hour|add:"1" }}: {{ hour_data.sleep }} </li> 
+        <li>Yawns till {{ hour_data.hour|add:"1" }}: {{ hour_data.yawns }} </li> 
+        <li> Sleep between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_sleep }}</li>
+        <li>Yawns between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_yawns }}</li>
+      </ul>
+        {% endfor %}
+      </ul>
+    </details>
+
+      </div>
+
+    </div>
+
 
 </div>
 <hr>

@@ -7,6 +7,7 @@ from ai.main import main
 import os
 import threading
 import database.client as database
+import utils.main as utils
 
 
 def start(request):
@@ -37,12 +38,16 @@ def lifestyle(request):
     if request.method == "POST":
         start_date = request.POST.get("start")
         end_date = request.POST.get("end")
-        # print("---------------")
-        # print(type(start_date), start_date, end_date)
-        # print("---------------")
-        data = database.find_data_in_date_range(start_date, end_date)
+        start_date1 = request.POST.get("start1")
+        end_date1 = request.POST.get("end1")
+
+        first = database.find_data_in_date_range(start_date, end_date)
+        second = database.find_data_in_date_range(start_date1, end_date1)
+        # print(list(zip(first, second)))
+        summary = utils.lifestyle_summary(first, second)
+        
         # print(data)
-        return render(request, "lifestyle_analysis.html", {"data": data})
+        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary})
 
 
 def tiredness(request):

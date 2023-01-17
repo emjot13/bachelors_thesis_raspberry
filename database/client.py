@@ -124,8 +124,9 @@ def find_data_in_date_range(start_date, end_date):
             },
                     {
             '$addFields':{
-                'avg_yawns_per_hour': { '$divide': [ '$total_yawns', {'$divide': ['$working_time', 3600000]}] },
-                'avg_sleep_per_hour': { '$divide': [ '$total_sleep', {'$divide': ['$working_time', 3600000]}] }
+                'avg_yawns_per_hour': { '$round' : [{ '$divide': [ '$total_yawns', {'$divide': ['$working_time', 3600000]}] }, 2] },
+                'avg_sleep_per_hour': { '$round' : [{ '$divide': [ '$total_sleep', {'$divide': ['$working_time', 3600000]}] }, 2] }
+
 
 
              }
@@ -136,6 +137,8 @@ def find_data_in_date_range(start_date, end_date):
                 '_id': 1,
             }
         },
+
+
                             {
             '$project': {
                 'day': '$_id',
@@ -158,20 +161,22 @@ def find_data_in_date_range(start_date, end_date):
     ])
 
     result = list(result)
+    # print(result)
+
 
 
     for day in result:
-        # day["day"] = day.pop("_id")
-        hours = day["hours"]
-        hours[0]["increase_sleep"], hours[0]["increase_yawns"] = 0, 0
+        hours = sorted(day["hours"], key=lambda x: x["_id"])
+        hours[0]["increase_sleep"], hours[0]["increase_yawns"] = hours[0]["sleep"], hours[0]["yawns"]
         hours[0]["hour"] = hours[0].pop("_id")
         
         for i in range(1, len(hours)):
             hours[i]["increase_sleep"] = hours[i]["sleep"] - hours[i - 1]["sleep"]
             hours[i]["increase_yawns"] = hours[i]["yawns"] - hours[i - 1]["yawns"]
             hours[i]["hour"] = hours[i].pop("_id")
+        day["hours"] = hours
 
-    print(result)
+    # print(result)
 
 
     return result
