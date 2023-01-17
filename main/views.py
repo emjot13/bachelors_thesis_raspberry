@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from pymongo import MongoClient
 from django.shortcuts import render, redirect
 
 from ai.main import main
@@ -67,6 +67,22 @@ def games(request):
 
 def mathgame(request):
     return render(request, 'math_game.html')
+
+def add_to_mongodb(request):
+    if request.method == 'POST':
+        client = MongoClient(f"mongodb://localhost:27017")
+        db = client["user_data"]
+        games_collection = db["games"]
+
+        data = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        time = request.POST.get('time')
+        #data nie przechodzi z math_game.html :<
+        print("data=",data, game, score, time)
+            
+        #games_collection.insert_one(data)
+    return redirect(games)
 
 def memorygame(request):
     return render(request, 'memory_game.html')
