@@ -7,6 +7,7 @@ from ai.main import main
 import os
 import threading
 import database.client as database
+import database.client_games as database_games
 
 
 def start(request):
@@ -66,23 +67,13 @@ def games(request):
     return render(request, 'games.html')
 
 def mathgame(request):
-    return render(request, 'math_game.html')
-
-def add_to_mongodb(request):
     if request.method == 'POST':
-        client = MongoClient(f"mongodb://localhost:27017")
-        db = client["user_data"]
-        games_collection = db["games"]
-
-        data = request.POST.get('data')
+        date = request.POST.get('data')
         game = request.POST.get('game')
         score = request.POST.get('score')
-        time = request.POST.get('time')
-        #data nie przechodzi z math_game.html :<
-        print("data=",data, game, score, time)
-            
-        #games_collection.insert_one(data)
-    return redirect(games)
+        database_games.insert_data(date, game, score)
+        return redirect(games)
+    return render(request, 'math_game.html')
 
 def memorygame(request):
     return render(request, 'memory_game.html')

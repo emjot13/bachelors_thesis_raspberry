@@ -60,15 +60,14 @@
   </div> 
   <br>
   <h4 id="score"></h4>
-  <!-- variable "score" nie przechodzi do views.py -->
+  <br>
   <div id="finish" style="display: none;">
-    <form method="post" action="{% url 'add_to_mongodb' %}">
+    <form method="post" action="{% url 'mathgame' %}">
       {% csrf_token %}
       <input id="myInput1" type="hidden" name="data">
       <input id="myInput2" type="hidden" name="game">
       <input id="myInput3" type="hidden" name="score">
-      <input id="myInput4" type="hidden" name="time">
-      <input type="submit" value="Submit">
+      <input type="submit" value="Zatwierdź wynik!">
     </form>
   </div>
 
@@ -110,18 +109,16 @@
       //Jesli wszystkie odpowiedzi zostały udzielone to v
       if (answer_num > 4){
         let mean_time = (times.reduce((a, b) => a + b, 0)/times.length).toFixed(2)
-        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5"+ ". Średni czas: "+mean_time+"s";
+        let score = ((good_answers*2)/5*((5/mean_time).toFixed(2))).toFixed(2)
+        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5"+ ". Średni czas: "+mean_time+"s"+" Ogólna punktacja: "+score+" (2 to dobry wynik)";
         document.getElementById("b" + (answer_num)).style.display = "none";
         document.getElementById("score").style.display = "inline-block";
         document.getElementById("finish").style.display = "inline-block";
 
         let date = new Date()
-        //variable score
-        score = {date: date, game: "math",time: mean_time, points: good_answers}
         document.getElementById("myInput1").value = date
         document.getElementById("myInput2").value = "math"
-        document.getElementById("myInput3").value = good_answers
-        document.getElementById("myInput4").value = mean_time
+        document.getElementById("myInput3").value = score
 
       } else{
         document.getElementById("btn" + (answer_num+1)).style.display = "inline-block";
