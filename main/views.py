@@ -3,8 +3,7 @@ from django.http import HttpResponse
 
 from django.shortcuts import render, redirect
 
-from ai.main import FatigueDetector
-# from ai.fatigue_detection.landmarks import Landmarks
+from ai.fatigue_detection.main import FatigueDetector
 
 import os
 import threading
@@ -13,12 +12,6 @@ import utils.main as utils
 
 
 def start(request):
-    # if request.method == "POST":
-    # #     m = threading.Thread(target = main)
-    # #     m.start()
-    # # # print("here")
-
-
     return render(request, "start.html")
 
 def detection_conf(request):
@@ -31,7 +24,7 @@ def detection_conf(request):
         database_writes_frequency = int(data.get("database_frequency"))
         
 
-        print(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
+        # print(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
         # print(type(closed_eyes_seconds_threshold), type(fps), type(eye_aspect_ratio_threshold), yawn_threshold, database_writes_frequency)
 
 
