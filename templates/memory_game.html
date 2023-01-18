@@ -30,10 +30,24 @@
 </head>
 <body>
     <form action="games" method="GET">{% csrf_token %}<div><button style="font-size: 1.3em" type="submit">Wróć</button></div></form>
+    <h3 id="counter"></h3>
   <div class="game-board">
     <!-- Game cards go here -->
   </div>
+  <br/>
+  <h4 id="score"></h4>
+  <br/>
+  <div id="finish" style="display: none;">
+    <form method="post" action="{% url 'memorygame' %}">
+      {% csrf_token %}
+      <input id="myInput1" type="hidden" name="data">
+      <input id="myInput2" type="hidden" name="game">
+      <input id="myInput3" type="hidden" name="score">
+      <input type="submit" value="Zatwierdź wynik!">
+    </form>
+  </div>
   <script>
+    let score = 0
     const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'];
     cards.sort(() => Math.random() - 0.5);
     const gameBoard = document.querySelector('.game-board');
@@ -54,15 +68,18 @@
         const flippedCards = document.querySelectorAll('.flipped');
 
         if (flippedCards.length === 2) {
-            const AllCards = document.querySelectorAll('.game-card');
-            for (let one of AllCards){
-                one.style.pointerEvents = "none";
-            }
+          score += 1
+          document.getElementById("counter").innerHTML = "Wynik: "+score;
+          const AllCards = document.querySelectorAll('.game-card');
+          for (let one of AllCards){
+            one.style.pointerEvents = "none";
+          }
           if (flippedCards[0].innerText === flippedCards[1].innerText) {
             flippedCards[0].classList.add('matched');
             flippedCards[1].classList.add('matched');
-          }
 
+          }
+          let matchedCards = document.querySelectorAll('.matched');
           setTimeout(function() {
             flippedCards[0].classList.remove('flipped');
             if (!flippedCards[0].classList.contains('matched')){
@@ -71,6 +88,15 @@
             flippedCards[1].classList.remove('flipped');
             if (!flippedCards[1].classList.contains('matched')){
                 flippedCards[1].style.fontSize = 0;
+            }
+            if (matchedCards.length == 16){
+              document.getElementById("score").innerHTML = "Karty zostały obrócone "+score+" razy!";
+              document.getElementById("score").style.display = "inline-block";
+              document.getElementById("finish").style.display = "inline-block"
+              let date = new Date()
+              document.getElementById("myInput1").value = date
+              document.getElementById("myInput2").value = "memory"
+              document.getElementById("myInput3").value = score
             }
             for (let one of AllCards){
                 one.style.pointerEvents = "auto";

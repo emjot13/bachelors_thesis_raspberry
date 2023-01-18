@@ -76,4 +76,10 @@ def mathgame(request):
     return render(request, 'math_game.html')
 
 def memorygame(request):
+    if request.method == 'POST':
+        date = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        database_games.insert_data(date, game, score)
+        return redirect(games)
     return render(request, 'memory_game.html')
