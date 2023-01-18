@@ -3,7 +3,8 @@ from django.http import HttpResponse
 
 from django.shortcuts import render, redirect
 
-from ai.main import main
+from ai.fatigue_detection.main import FatigueDetector
+
 import os
 import threading
 import database.client as database
@@ -11,12 +12,32 @@ import utils.main as utils
 
 
 def start(request):
-    if request.method == "POST":
-        m = threading.Thread(target = main)
-        m.start()
-    # print("here")
-
     return render(request, "start.html")
+
+def detection_conf(request):
+    if request.method == "POST":
+        data = request.POST
+        closed_eyes_seconds_threshold = int(data.get("closed_eyes_seconds_threshold"))
+        fps = int(data.get("fps"))
+        eye_aspect_ratio_threshold = float(data.get("eye_aspect_ratio_threshold"))
+        yawn_threshold = int(data.get("yawn_threshold"))
+        database_writes_frequency = int(data.get("database_frequency"))
+        
+
+        # print(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
+        # print(type(closed_eyes_seconds_threshold), type(fps), type(eye_aspect_ratio_threshold), yawn_threshold, database_writes_frequency)
+
+
+        detector = FatigueDetector(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
+        detector_thread = threading.Thread(target = detector.run)
+        detector_thread.start()
+
+
+        return render(request, "start.html")
+
+
+
+    return render(request, "detection_conf.html")        
 
 def shutdown(request):
     if request.method == "POST":
