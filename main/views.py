@@ -24,7 +24,7 @@ def detection_conf(request):
         database_writes_frequency = int(data.get("database_frequency"))
         
 
-        # print(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
+        print(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
         # print(type(closed_eyes_seconds_threshold), type(fps), type(eye_aspect_ratio_threshold), yawn_threshold, database_writes_frequency)
 
 
