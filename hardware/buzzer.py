@@ -3,7 +3,7 @@ from time import sleep
 
 
 
-def beep(interval_sec = 0.5, times = 2):
+def beep(interval_sec = 0.5, times = 20):
     GPIO.setmode(GPIO.BCM)
     buzzer = 23
     GPIO.setup(buzzer, GPIO.OUT)
@@ -15,5 +15,5 @@ def beep(interval_sec = 0.5, times = 2):
         sleep(interval_sec)
     GPIO.cleanup()
 
-
+beep()
 

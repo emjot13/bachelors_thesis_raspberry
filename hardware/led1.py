@@ -15,17 +15,4 @@ def led(color, interval = 1, times = 10):
     GPIO.cleanup()
 
 
-led("green")
-
-
-# def led(color, stop):
-#     GPIO.setmode(GPIO.BCM)
-#     LED_PIN = 17 if color == "red" else 18
-#     GPIO.setup(LED_PIN, GPIO.OUT)
-#     try:
-#         while not stop():
-#             GPIO.output(LED_PIN, GPIO.HIGH)
-#     except KeyboardInterrupt:
-#         GPIO.cleanup()
-#     GPIO.cleanup()
-
+led("red")
