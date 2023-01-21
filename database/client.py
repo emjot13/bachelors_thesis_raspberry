@@ -73,7 +73,7 @@ def populate_database_with_mock_data():
 # generate_mock_data()
 # populate_database_with_mock_data()
 
-def find_data_intervals_date_range(start_date=None, end_date=None, interval=15):
+def find_data_intervals_date_range(interval, start_date=None, end_date=None):
     items = []
     if interval is None:
         interval = 15
@@ -91,12 +91,6 @@ def find_data_intervals_date_range(start_date=None, end_date=None, interval=15):
     result = fatigue_collection.aggregate([
         {
             '$match': {'day': {'$gte': start_date, '$lte': end_date},
-                           '$expr': {
-                               '$and': [
-                                   {'$gte': [{'$hour': '$day'}, 8]},
-                                   {'$lte': [{'$hour': '$day'}, 16]},
-                               ]
-                           }
                        }
 
         },

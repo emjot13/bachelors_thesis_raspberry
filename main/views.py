@@ -8,6 +8,7 @@ import os
 import threading
 import database.client as database
 import utils.main as utils
+import json
 
 
 def start(request):
@@ -56,18 +57,11 @@ def tiredness(request):
         interval = request.GET.get("time_interval", None)
         start_date = request.GET.get("start_date", None)
         end_date = request.GET.get("end_date", None)
-        print(start_date)
         if interval:
             interval = int(interval)
 
         data = database.find_data_intervals_date_range(interval=interval, start_date=start_date, end_date=end_date)
-        yawns = 0
-        sleep = 0
-        for item in data:
-            yawns+=item['yawns']
-            sleep+=item['sleep']
-        print(yawns, sleep)
-        labels = [item['day'].strftime("%m/%d/%Y, %H:%M:%S") for item in data]
+        labels = [item['day'].strftime("%m/%d/%Y %H:%M:%S") for item in data]
         context = {
             'message': 'These are your tiredness stats',
             'items': data,
@@ -87,32 +81,5 @@ def tiredness(request):
                     }
                 ]
             }
-
         }
         return render(request, 'tiredness_stats.html', context)
-    if request.method == "POST":
-        start_date = request.POST.get("start")
-        end_date = request.POST.get("end")
-        data = database.find_data_intervals_date_range(start_date, end_date)
-        labels = [item['day'].strftime("%m/%d/%Y, %H:%M:%S") for item in data]
-    # data = database.get_all_data()
-    # print(data, type(data))
-
-    # old_days = [item['day'] for item in items]
-
-    # print(days)
-    # print(old_days)
-    context = {
-        'message': 'These are your tiredness stats',
-        'items': data,
-        'chart_data': {
-    'labels': labels,
-    'datasets': [{
-        'label': 'Yawns',
-        'data': [item['yawns'] for item in data],
-        'backgroundColor': 'rgba(255, 99, 132, 0.2)',
-        'borderColor': 'rgba(255, 99, 132, 1)',
-    }]
-}
-    }
-    return render(request, 'tiredness_stats.html', context)
