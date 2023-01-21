@@ -8,6 +8,7 @@ from ai.fatigue_detection.main import FatigueDetector
 import os
 import threading
 import database.client as database
+import database.client_games as database_games
 import utils.main as utils
 
 
@@ -93,3 +94,26 @@ def tiredness(request):
 }
     }
     return render(request, 'tiredness_stats.html', context)
+
+#-----------------------GAMES------------------------
+
+def games(request):
+    return render(request, 'games.html')
+
+def mathgame(request):
+    if request.method == 'POST':
+        date = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        database_games.insert_data(date, game, score)
+        return redirect(games)
+    return render(request, 'math_game.html')
+
+def memorygame(request):
+    if request.method == 'POST':
+        date = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        database_games.insert_data(date, game, score)
+        return redirect(games)
+    return render(request, 'memory_game.html')

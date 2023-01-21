@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: 445px;
+      height: 445px;
+      margin: 0 auto;
+      background-color: #fff;
+    }
+    .game-card {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(160, 160, 160);
+      border: 2px solid #000;
+      font-size: 48px;
+      text-align: center;
+      line-height: 100px;
+      color: #fff;
+    }
+    .game-card.matched {
+      background-color: rgb(32, 250, 138);
+    }
+    .game-card.flipped {
+      background-color: rgb(46, 46, 254);
+    }
+  </style>
+</head>
+<body>
+    <form action="games" method="GET">{% csrf_token %}<div><button style="font-size: 1.3em" type="submit">Wróć</button></div></form>
+    <h3 id="counter"></h3>
+  <div class="game-board">
+    <!-- Game cards go here -->
+  </div>
+  <br/>
+  <h4 id="score"></h4>
+  <br/>
+  <div id="finish" style="display: none;">
+    <form method="post" action="{% url 'memorygame' %}">
+      {% csrf_token %}
+      <input id="myInput1" type="hidden" name="data">
+      <input id="myInput2" type="hidden" name="game">
+      <input id="myInput3" type="hidden" name="score">
+      <input type="submit" value="Zatwierdź wynik!">
+    </form>
+  </div>
+  <script>
+    let score = 0
+    const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'];
+    cards.sort(() => Math.random() - 0.5);
+    const gameBoard = document.querySelector('.game-board');
+    // Create the game cards
+    for (let card of cards) {
+      // Create the card element
+      const gameCard = document.createElement('div');
+      gameCard.classList.add('game-card');
+      gameCard.innerText = card;
+      gameCard.style.fontSize = 0;
+      gameCard.addEventListener('click', function() {
+        if (gameCard.classList.contains('flipped') || gameCard.classList.contains('matched')) {
+          return;
+        }
+        // Flip the card
+        gameCard.classList.add('flipped');
+        gameCard.style.fontSize = "xx-large";
+        const flippedCards = document.querySelectorAll('.flipped');
+
+        if (flippedCards.length === 2) {
+          score += 1
+          document.getElementById("counter").innerHTML = "Wynik: "+score;
+          const AllCards = document.querySelectorAll('.game-card');
+          for (let one of AllCards){
+            one.style.pointerEvents = "none";
+          }
+          if (flippedCards[0].innerText === flippedCards[1].innerText) {
+            flippedCards[0].classList.add('matched');
+            flippedCards[1].classList.add('matched');
+
+          }
+          let matchedCards = document.querySelectorAll('.matched');
+          setTimeout(function() {
+            flippedCards[0].classList.remove('flipped');
+            if (!flippedCards[0].classList.contains('matched')){
+                flippedCards[0].style.fontSize = 0;
+            }
+            flippedCards[1].classList.remove('flipped');
+            if (!flippedCards[1].classList.contains('matched')){
+                flippedCards[1].style.fontSize = 0;
+            }
+            if (matchedCards.length == 16){
+              document.getElementById("score").innerHTML = "Karty zostały obrócone "+score+" razy!";
+              document.getElementById("score").style.display = "inline-block";
+              document.getElementById("finish").style.display = "inline-block"
+              let date = new Date()
+              document.getElementById("myInput1").value = date
+              document.getElementById("myInput2").value = "memory"
+              document.getElementById("myInput3").value = score
+            }
+            for (let one of AllCards){
+                one.style.pointerEvents = "auto";
+            }
+          }, 1000);
+        }
+      });
+      gameBoard.appendChild(gameCard);
+    }
+  </script>
+</body>
+</html>
