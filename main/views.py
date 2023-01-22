@@ -10,6 +10,9 @@ import threading
 import database.client as database
 import utils.main as utils
 
+import hardware.distance as distance
+import hardware.photoresistor as room_light
+
 
 def start(request):
     return render(request, "start.html")
@@ -23,14 +26,15 @@ def detection_conf(request):
         yawn_threshold = int(data.get("yawn_threshold"))
         database_writes_frequency = int(data.get("database_frequency"))
         
-
-        # print(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
-        # print(type(closed_eyes_seconds_threshold), type(fps), type(eye_aspect_ratio_threshold), yawn_threshold, database_writes_frequency)
-
-
         detector = FatigueDetector(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
         detector_thread = threading.Thread(target = detector.run)
         detector_thread.start()
+
+        screen_distance = threading.Thread(target = distance.proper_distance_from_screen)
+        screen_distance.start()
+
+        proper_room_light = threading.Thread(target = room_light.check_room_light)
+        proper_room_light.start()
 
 
         return render(request, "start.html")
