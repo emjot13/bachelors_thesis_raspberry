@@ -70,7 +70,6 @@ class FatigueDetector:
 
                 if sleep and eye_aspect_ratio > self.eye_aspect_ratio_threshold:
                     self.sleeping_counter += 1
-                    print("HEEEEREEEEEE", self.sleeping_counter)
                     frame_counter = 0
                     sleep = False
                     buzzer = threading.Thread(target=beep)

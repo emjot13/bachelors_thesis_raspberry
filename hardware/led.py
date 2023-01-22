@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 
-def led(color, interval = 1, times = 10):
+def beeping_led(color, interval = 1, times = 3):
 
     GPIO.setmode(GPIO.BCM)
     LED_PIN = 17 if color == "red" else 18
@@ -15,17 +15,15 @@ def led(color, interval = 1, times = 10):
     GPIO.cleanup()
 
 
-led("green")
+def constant_led(color, stop):
+    GPIO.setmode(GPIO.BCM)
+    LED_PIN = 17 if color == "red" else 18
+    GPIO.setup(LED_PIN, GPIO.OUT)
+    try:
+        while not stop():
+            GPIO.output(LED_PIN, GPIO.HIGH)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+    GPIO.cleanup()
 
-
-# def led(color, stop):
-#     GPIO.setmode(GPIO.BCM)
-#     LED_PIN = 17 if color == "red" else 18
-#     GPIO.setup(LED_PIN, GPIO.OUT)
-#     try:
-#         while not stop():
-#             GPIO.output(LED_PIN, GPIO.HIGH)
-#     except KeyboardInterrupt:
-#         GPIO.cleanup()
-#     GPIO.cleanup()
-
+# led("green")

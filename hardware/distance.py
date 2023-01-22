@@ -1,44 +1,50 @@
 import RPi.GPIO as GPIO
 import time
-GPIO.setmode(GPIO.BCM)
 
-TRIG = 25
-ECHO = 23
+def check_distance():
+    GPIO.setmode(GPIO.BCM)
 
-print("Distance Measurement In Progress")
+    GPIO_TRIGGER = 25
+    GPIO_ECHO = 24
+    RED_LED_PIN = 17
+    GREEN_LED_PIN = 18
+    SONIC_SPEED = 34300 # cm/s
 
-GPIO.setup(TRIG,GPIO.OUT)
-GPIO.setup(ECHO,GPIO.IN)
-try:
-    while True:
-        
-        GPIO.output(TRIG, GPIO.LOW)
-        print("Waiting For Sensor To Settle")
-        time.sleep(2)
-        
-        GPIO.output(TRIG, GPIO.HIGH)
-        print("here")
-        time.sleep(0.00001)
-        GPIO.output(TRIG, GPIO.LOW)
-        
-        while GPIO.input(ECHO)==0:
-            pulse_start = time.time()
-       
-        print("here1")
 
-        while GPIO.input(ECHO)==1:
-            pulse_end = time.time()
-        
-        print("here2")
+    GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+    GPIO.setup(RED_LED_PIN, GPIO.OUT)
+    GPIO.setup(GREEN_LED_PIN, GPIO.OUT)
+    GPIO.setup(GPIO_ECHO, GPIO.IN)
 
-        pulse_duration = pulse_end - pulse_start
-        
-        distance = pulse_duration * 17150
-        
-        distance = round(distance, 2)
-        
-        print("Distance: ",distance,"cm")
-        
-except KeyboardInterrupt: # If there is a KeyboardInterrupt (when you press ctrl+c), exit the program
-    print("Cleaning up!")
-    GPIO.cleanup()
+    GPIO.output(GPIO_TRIGGER, True)
+    time.sleep(0.00001)
+    GPIO.output(GPIO_TRIGGER, False)
+
+    while GPIO.input(GPIO_ECHO) == 0:
+        start_time = time.time()
+
+    while GPIO.input(GPIO_ECHO) == 1:
+        stop_time = time.time()
+
+    travel_time = stop_time - start_time
+    distance = (travel_time * SONIC_SPEED) / 2
+    print(distance)
+
+    if 46 <= distance <= 76:
+        GPIO.output(GREEN_LED_PIN, GPIO.HIGH)
+        GPIO.output(RED_LED_PIN, GPIO.LOW)
+    else:
+        GPIO.output(RED_LED_PIN, GPIO.HIGH)
+        GPIO.output(GREEN_LED_PIN, GPIO.LOW)
+
+ 
+
+def proper_distance_from_screen():
+    try:
+        while True:
+            check_distance()
+            time.sleep(1)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+
+
