@@ -65,13 +65,19 @@ def lifestyle(request):
 
         first = database.find_data_in_date_range(start_date, end_date)
         second = database.find_data_in_date_range(start_date1, end_date1)
-        # first_games = database_games.find_data_in_date_range(start_date, end_date)
-        # second_games = database_games.find_data_in_date_range(start_date1, end_date1)
-        # print(list(zip(first, second)))
         summary = utils.lifestyle_summary(first, second)
+        #games--------
+        first_game_math = database_games.find_data_in_date_range(start_date, end_date, "math")
+        second_game_math = database_games.find_data_in_date_range(start_date1, end_date1, "math")
+        first_game_memory = database_games.find_data_in_date_range(start_date, end_date, "memory")
+        second_game_memory = database_games.find_data_in_date_range(start_date1, end_date1, "memory")
+        summary_games = {"first": {"math": round(first_game_math[0]['average_score'], 2), "memory": round(first_game_memory[0]['average_score'],2)},
+         "second": {"math": round(second_game_math[0]['average_score'],2), "memory": round(second_game_memory[0]['average_score'],2)}
+        }
+        #print("summary_games =",summary_games)
         
         # print(data)
-        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary})
+        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "summary_games": summary_games})
 
 
 def tiredness(request):
