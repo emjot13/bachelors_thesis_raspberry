@@ -8,6 +8,7 @@ from ai.fatigue_detection.main import FatigueDetector
 import os
 import threading
 import database.client as database
+import database.client_games as database_games
 import utils.main as utils
 
 import hardware.distance as distance
@@ -68,11 +69,19 @@ def lifestyle(request):
 
         first = database.find_data_in_date_range(start_date, end_date)
         second = database.find_data_in_date_range(start_date1, end_date1)
-        # print(list(zip(first, second)))
         summary = utils.lifestyle_summary(first, second)
+        #games--------
+        first_game_math = database_games.find_data_in_date_range(start_date, end_date, "math")
+        second_game_math = database_games.find_data_in_date_range(start_date1, end_date1, "math")
+        first_game_memory = database_games.find_data_in_date_range(start_date, end_date, "memory")
+        second_game_memory = database_games.find_data_in_date_range(start_date1, end_date1, "memory")
+        summary_games = {"first": {"math": round(first_game_math[0]['average_score'], 2), "memory": round(first_game_memory[0]['average_score'],2)},
+         "second": {"math": round(second_game_math[0]['average_score'],2), "memory": round(second_game_memory[0]['average_score'],2)}
+        }
+        #print("summary_games =",summary_games)
         
         # print(data)
-        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary})
+        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "summary_games": summary_games})
 
 
 def tiredness(request):
@@ -97,3 +106,26 @@ def tiredness(request):
 }
     }
     return render(request, 'tiredness_stats.html', context)
+
+#-----------------------GAMES------------------------
+
+def games(request):
+    return render(request, 'games.html')
+
+def mathgame(request):
+    if request.method == 'POST':
+        date = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        database_games.insert_data(date, game, float(score))
+        return redirect(games)
+    return render(request, 'math_game.html')
+
+def memorygame(request):
+    if request.method == 'POST':
+        date = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        database_games.insert_data(date, game, float(score))
+        return redirect(games)
+    return render(request, 'memory_game.html')
