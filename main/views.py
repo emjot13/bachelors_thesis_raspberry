@@ -61,14 +61,42 @@ def lifestyle(request):
         end_date = request.POST.get("end")
         start_date1 = request.POST.get("start1")
         end_date1 = request.POST.get("end1")
-
         first = database.find_data_in_date_range(start_date, end_date)
         second = database.find_data_in_date_range(start_date1, end_date1)
-        # print(list(zip(first, second)))
+        #print(list(zip(first, second)))
+        print(first)
+        labels = [item['hour'] for item in first[0]['hours']]
+        data_yawns_first = [item['yawns'] for item in first[0]['hours']]
+        data_sleep_first = [item['sleep'] for item in first[0]['hours']]
+
+        data_yawns_second = [item['yawns'] for item in second[0]['hours']]
+        data_sleep_second = [item['sleep'] for item in second[0]['hours']]
+
+        print(f"labels: {labels}")
+        context = {
+            'message': 'These are your tiredness stats',
+            'items': first,
+            'chart_data': {
+                'labels': labels,
+                'datasets': [{
+                    'label': 'Yawns',
+                    'data': data_yawns_first,
+                    'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+                    'borderColor': 'rgba(255, 99, 132, 1)',
+                },
+                    {
+                    'label': 'Closed eyes',
+                    'data': data_sleep_first,
+                    'backgroundColor': 'rgba(55, 199, 132, 0.2)',
+                    'borderColor': 'rgba(55, 199, 132, 1)',
+                    }
+                ]
+            }
+        }
         summary = utils.lifestyle_summary(first, second)
         
         # print(data)
-        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary})
+        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "context": context})
 
 
 def tiredness(request):
