@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Math Game</title>
+  <style>
+    body{
+      background-color: rgb(1, 48, 102);
+      color: white;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    button{
+      width: 150px;
+      font-weight: bold;
+      border:black 3px solid;
+      background-color: rgb(0, 89, 223);
+      border-radius: 10px;
+      padding: 5px;
+      margin: 5px;
+      color: rgb(209, 209, 209);
+    }
+    button:hover{
+      background-color: rgb(1, 102, 255);
+      color: white;
+    }
+    button:active{
+      background-color: rgb(0, 72, 179);
+    }
+    .box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+  <form action="games" method="GET">{% csrf_token %}<div><button style="font-size: 1.3em" type="submit">Wróć</button></div></form>
+  <div id="btn0">
+    <p>Gotowy na dodawanie liczb?</p>
+    <button id="btnstart" type="button" onclick="start()">Start!</button>
+  </div>
+  <div id="btn1" style="display: none;">
+  <p>Twoje liczby to: <span id="num1"></span> i <span id="num2"></span>.</p>
+  <form onkeypress="return event.keyCode != 13">
+    <label>Podaj sumę tych liczb:</label>
+    <input type="number" id="answer1" required>
+    <button id="b1" type="button" onclick="checkAnswer()">Zatwierdź</button>
+  </form>
+  <p id="result1"></p>
+  </div> 
+  <br>
+  <div id="btn2" style="display: none;">
+    <p>Twoje liczby to: <span id="num3"></span> i <span id="num4"></span>.</p>
+    <form onkeypress="return event.keyCode != 13">
+      <label>Podaj sumę tych liczb:</label>
+      <input type="number" id="answer2" required>
+      <button id="b2" type="button" onclick="checkAnswer()">Zatwierdź</button>
+    </form>
+    <p id="result2"></p>
+  </div> 
+  <br>
+  <div id="btn3" style="display: none;">
+      <p>Twoje liczby to: <span id="num5"></span> i <span id="num6"></span>.</p>
+      <form onkeypress="return event.keyCode != 13">
+        <label>Podaj sumę tych liczb:</label>
+        <input type="number" id="answer3" required>
+        <button id="b3" type="button" onclick="checkAnswer()">Zatwierdź</button>
+      </form>
+      <p id="result3"></p>
+  </div> 
+  <br>
+  <div id="btn4" style="display: none;">
+    <p>Twoje liczby to: <span id="num7"></span> i <span id="num8"></span>.</p>
+    <form onkeypress="return event.keyCode != 13">
+      <label>Podaj sumę tych liczb:</label>
+      <input type="number" id="answer4" required>
+      <button id="b4" type="button" onclick="checkAnswer()">Zatwierdź</button>
+    </form>
+    <p id="result4"></p>
+  </div> 
+  <br>
+  <div id="btn5" style="display: none;">
+    <p>Twoje liczby to: <span id="num9"></span> i <span id="num10"></span>.</p>
+    <form onkeypress="return event.keyCode != 13">
+      <label>Podaj sumę tych liczb:</label>
+      <input type="number" id="answer5" required>
+      <button id="b5" type="button" onclick="checkAnswer()">Zatwierdź</button>
+    </form>
+    <p id="result5"></p>
+  </div> 
+  <br>
+  <h4 id="score"></h4>
+  <br>
+  <div id="finish" style="display: none;">
+    <form method="post" action="{% url 'mathgame' %}">
+      {% csrf_token %}
+      <input id="myInput1" type="hidden" name="data">
+      <input id="myInput2" type="hidden" name="game">
+      <input id="myInput3" type="hidden" name="score">
+      <input type="submit" value="Zatwierdź wynik!">
+    </form>
+  </div>
+
+  <script>
+    let rand_nums = []
+    let correct_answers = []
+    let answer_num = 1
+    let good_answers = 0
+    let start_time = new Date();
+    let end_time = new Date();
+    let times = []
+    let score = {}
+    for (let i = 1; i < 11; i++) {
+        const rand = Math.floor(Math.random() * 100) + 15;
+        rand_nums.push(rand);
+        document.getElementById("num"+i).innerHTML = rand;
+    }
+    for (let i = 0; i < 5; i++) {
+        correct_answers.push(rand_nums[2*i] + rand_nums[2*i + 1])
+    }
+    function start() {
+      document.getElementById("btn0").style.display = "none";
+      document.getElementById("btn1").style.display = "inline-block";
+      start_time = new Date()
+    }
+
+    function checkAnswer() {
+      let answer = document.getElementById("answer"+answer_num).value;
+      let time = new Date()
+      end_time = time
+      times.push((end_time - start_time) / 1000)
+      start_time = time
+      if (answer == correct_answers[answer_num -1]) {
+        document.getElementById("result"+[answer_num]).innerHTML = "Dobrze!"+"Twój czas to: "+times[answer_num -1].toFixed(2)+"s";
+        good_answers++
+      } else {
+        document.getElementById("result"+[answer_num]).innerHTML = "Źle. Poprawna odpowiedź to: " + correct_answers[answer_num - 1]+" Twój czas to: "+times[answer_num -1].toFixed(2)+"s";
+      }
+      //Jesli wszystkie odpowiedzi zostały udzielone to v
+      if (answer_num > 4){
+        let mean_time = (times.reduce((a, b) => a + b, 0)/times.length).toFixed(2)
+        let score = ((good_answers*2)/5*((5/mean_time).toFixed(2))).toFixed(2)
+        document.getElementById("score").innerHTML = "Twój wynik to "+good_answers+"/5"+ ". Średni czas: "+mean_time+"s"+" Ogólna punktacja: "+score+" (2 to dobry wynik)";
+        document.getElementById("b" + (answer_num)).style.display = "none";
+        document.getElementById("score").style.display = "inline-block";
+        document.getElementById("finish").style.display = "inline-block";
+
+        let date = new Date()
+        document.getElementById("myInput1").value = date
+        document.getElementById("myInput2").value = "math"
+        document.getElementById("myInput3").value = score
+
+      } else{
+        document.getElementById("btn" + (answer_num+1)).style.display = "inline-block";
+        document.getElementById("b" + (answer_num)).style.display = "none";
+        answer_num++;
+      }
+    }
+  </script>
+</body>
+</html>
