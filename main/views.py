@@ -65,6 +65,8 @@ def lifestyle(request):
 
         first = database.find_data_in_date_range(start_date, end_date)
         second = database.find_data_in_date_range(start_date1, end_date1)
+        # first_games = database_games.find_data_in_date_range(start_date, end_date)
+        # second_games = database_games.find_data_in_date_range(start_date1, end_date1)
         # print(list(zip(first, second)))
         summary = utils.lifestyle_summary(first, second)
         
@@ -105,7 +107,7 @@ def mathgame(request):
         date = request.POST.get('data')
         game = request.POST.get('game')
         score = request.POST.get('score')
-        database_games.insert_data(date, game, score)
+        database_games.insert_data(date, game, float(score))
         return redirect(games)
     return render(request, 'math_game.html')
 
@@ -114,6 +116,6 @@ def memorygame(request):
         date = request.POST.get('data')
         game = request.POST.get('game')
         score = request.POST.get('score')
-        database_games.insert_data(date, game, score)
+        database_games.insert_data(date, game, float(score))
         return redirect(games)
     return render(request, 'memory_game.html')
