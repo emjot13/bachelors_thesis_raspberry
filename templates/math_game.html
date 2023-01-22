@@ -2,6 +2,40 @@
 <html>
 <head>
   <title>Math Game</title>
+  <style>
+    body{
+      background-color: rgb(1, 48, 102);
+      color: white;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    button{
+      width: 150px;
+      font-weight: bold;
+      border:black 3px solid;
+      background-color: rgb(0, 89, 223);
+      border-radius: 10px;
+      padding: 5px;
+      margin: 5px;
+      color: rgb(209, 209, 209);
+    }
+    button:hover{
+      background-color: rgb(1, 102, 255);
+      color: white;
+    }
+    button:active{
+      background-color: rgb(0, 72, 179);
+    }
+    .box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+  </style>
 </head>
 <body>
   <form action="games" method="GET">{% csrf_token %}<div><button style="font-size: 1.3em" type="submit">Wróć</button></div></form>
