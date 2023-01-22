@@ -10,6 +10,7 @@ import threading
 import database.client as database
 import database.client_games as database_games
 import utils.main as utils
+import json
 
 import hardware.distance as distance
 import hardware.photoresistor as room_light
@@ -85,10 +86,6 @@ def lifestyle(request):
 
 
 def tiredness(request):
-    # data = database.get_all_data()
-    # print(data, type(data))
-    labels = [item['day'].strftime("%m/%d/%Y, %H:%M:%S") for item in data]
-    # old_days = [item['day'] for item in items]
 
     # print(days)
     # print(old_days)
