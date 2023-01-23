@@ -3,26 +3,27 @@
 <head>
   <style>
     body{
-      background-color: rgb(1, 48, 102);
+      background-color: rgb(44, 51, 51);
+      color: rgb(231, 246, 242);
         }
     button{
       width: 200px;
       font-weight: bold;
-      border:black 3px solid;
-      background-color: rgb(0, 89, 223);
+      border:rgb(165, 201, 202) 3px solid;
+      background-color: rgb(57, 91, 100);
       border-radius: 10px;
       padding: 5px;
       margin: 5px;
-      color: rgb(209, 209, 209);
+      color: rgb(231, 246, 242);
     }
     button:hover{
-      background-color: rgb(1, 102, 255);
+      background-color: rgb(75, 118, 130);
       color: white;
     }
     button:active{
-      background-color: rgb(0, 72, 179);
+      background-color: rgb(48, 77, 85);
     }
-    .box {
+    .box, form{
       display: flex;
       justify-content: center;
       align-items: center;
@@ -55,12 +56,12 @@
 </head>
 <body>
     <form action="games" method="GET">{% csrf_token %}<div><button style="font-size: 1.3em" type="submit">Wróć</button></div></form>
-    <h3 id="counter"></h3>
+    <h3 class="box" id="counter"></h3>
   <div class="game-board">
     <!-- Game cards go here -->
   </div>
   <br/>
-  <h4 id="score"></h4>
+  <h4 class="box" id="score"></h4>
   <br/>
   <div id="finish" style="display: none;">
     <form method="post" action="{% url 'memorygame' %}">
