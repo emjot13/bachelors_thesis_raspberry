@@ -5,6 +5,7 @@ import threading
 from os.path import exists
 from os import remove
 import database.client as database
+from hardware.buzzer import beep
 from . import landmarks
 
 class FatigueDetector:
@@ -18,7 +19,9 @@ class FatigueDetector:
         self.closed_eyes_threshold_fps = FPS * closed_eyes_seconds_threshold
         self.landmarks = landmarks.Landmarks()
         self.yawning_counter, self.sleeping_counter = 0, 0
-        self.database_writer = threading.Thread(target=self.write_to_database_every_x_seconds)
+        # self.database_writer = threading.Thread(target=self.write_to_database_every_x_seconds)
+        # self.buzzer = threading.Thread(target=beep)
+
 
 
     def write_to_database_every_x_seconds(self):
@@ -48,12 +51,12 @@ class FatigueDetector:
         vs = VideoStream(framerate = self.FPS).start()  # starts video
         time.sleep(1)
         
-        self.database_writer.start()
+        # self.database_writer.start()
 
         while True:
             if FatigueDetector.check_logical_files():
                 vs.stop()
-                self.database_writer.join()
+                # self.database_writer.join()
                 break
 
             frame = cv2.resize(vs.read(), (450, 450))
@@ -64,16 +67,22 @@ class FatigueDetector:
                 eye_aspect_ratio = self.landmarks.final_ear(gray_image, rect)
                 lips_distance = self.landmarks.lip_distance(gray_image, rect)
                 print(eye_aspect_ratio, lips_distance)
+
                 if sleep and eye_aspect_ratio > self.eye_aspect_ratio_threshold:
                     self.sleeping_counter += 1
-                    print(self.sleeping_counter)
                     frame_counter = 0
                     sleep = False
+                    buzzer = threading.Thread(target=beep)
+                    buzzer.start()
+
+                
                 elif eye_aspect_ratio < self.eye_aspect_ratio_threshold:
                     print("closed eyes")
                     frame_counter += 1
                     if frame_counter >= self.closed_eyes_threshold_fps:
                         sleep = True
+
+
                 if not sleep and lips_distance > self.yawn_threshold:
                     yawn = True
                     print("Yawning")
