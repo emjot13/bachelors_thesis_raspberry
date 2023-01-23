@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
     <title>Example Template</title>
+      <script src="{% static 'js/Chart.min.js' %}"></script>
     <style>
     input {
       width: 100%; 
@@ -37,6 +39,7 @@
       </style>
   </head>
   <body>
+
 
     <div style="display: flex; justify-content: center;">
     <h1>Lifestyle analysis</h1>
@@ -143,6 +146,8 @@
 <hr>
 {% for day, day1 in data %}
 
+    <script>console.log({{day|safe}});</script>
+
 <div style="display: flex; justify-content: space-between;">
 
 <div class="box" style="margin-left: 5em;">
@@ -157,6 +162,50 @@
 
     <h3>You started work at: {{ day.start_time }}</h3>
     <h3>You finished work at: {{ day.end_time }}</h3>
+      <canvas id="myChart-{{forloop.counter}}"></canvas>
+            <script>
+    var chartData = {{day.hours|safe}}
+    var labels = []
+    var data_yawns = []
+    var data_sleep = []
+    chartData.reduce((prev,curr)=>{
+    console.log(curr);
+    labels.push(curr.hour);
+    data_yawns.push(curr.yawns);
+    data_sleep.push(curr.sleep);
+    },[])
+    var ctx = document.getElementById('myChart-{{forloop.counter}}').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+              data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sleep',
+                data: data_sleep,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Yawns',
+                data: data_yawns,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+</script>
+
   </div>
   <div>
     <details>
@@ -193,6 +242,49 @@
   
       <h3>You started work at: {{ day1.start_time }}</h3>
       <h3>You finished work at: {{ day1.end_time }}</h3>
+              <canvas id="myChart1-{{forloop.counter}}"></canvas>
+            <script>
+    var chartData = {{day1.hours|safe}}
+    var labels = []
+    var data_yawns = []
+    var data_sleep = []
+    chartData.reduce((prev,curr)=>{
+    console.log(curr);
+    labels.push(curr.hour);
+    data_yawns.push(curr.yawns);
+    data_sleep.push(curr.sleep);
+    },[])
+    var ctx = document.getElementById('myChart1-{{forloop.counter}}').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+              data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sleep',
+                data: data_sleep,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Yawns',
+                data: data_yawns,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+</script>
     </div>
       <div>
         <details>
@@ -219,12 +311,15 @@
 
 
 </div>
+
 <hr>
 {% endfor %}
 
 
 {% endif %}
 
-
+<!--  <script>-->
+<!--  window.addEventListener('load', createChart);-->
+<!--</script>-->
   </body>
 </html>
