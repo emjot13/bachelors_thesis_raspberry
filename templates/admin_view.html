@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <title>Example Template</title>
+    <script src="{% static 'js/chart.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+
+
+  </head>
+  <body>
+    <h1>{{ message }}</h1>
+
+<form>
+  <label for="date-input">Select Start Date:</label>
+  <input type="date" id="date-input" name="start_date">
+  <label for="end-date-input">Select End Date:</label>
+  <input type="date" id="end-date-input" name="end_date">
+  <button type="button" id="submit-dates-btn">Submit</button>
+  <script>
+
+    var startDateInput = document.getElementById("date-input");
+    var endDateInput = document.getElementById("end-date-input");
+    var submitDatesBtn = document.getElementById("submit-dates-btn");
+
+submitDatesBtn.addEventListener("click", function() {
+var startValue = startDateInput.value;
+var endValue = endDateInput.value;
+var currentUrl = new URL(window.location.href);
+var searchParams = new URLSearchParams(currentUrl.search);
+searchParams.delete("start_date");
+searchParams.delete("end_date");
+searchParams.append("start_date", startValue);
+searchParams.append("end_date", endValue);
+currentUrl.search = searchParams.toString();
+window.location = currentUrl.toString();
+});
+  </script>
+</form>
+<script>console.log({{items|safe}})</script>
+  {% for day in items %}
+    <div>Employees tiredness stats for {{ day.day }}</div>
+          <canvas id="myChart-{{forloop.counter}}"></canvas>
+        <script>console.log({{day|safe}});</script>
+    <script>
+
+    console.log({{day|safe}});
+    var chartData = {{day.hours|safe}}
+    var labels = []
+    var data_yawns = []
+    var data_sleep = []
+    chartData.reduce((prev,curr)=>{
+    console.log(curr);
+    labels.push(curr.hour);
+    data_yawns.push(curr.yawns);
+    data_sleep.push(curr.sleep);
+    },[])
+    var ctx = document.getElementById('myChart-{{forloop.counter}}').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+              data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sleep',
+                data: data_sleep,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Yawns',
+                data: data_yawns,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+</script>
+
+    {% endfor %}
+  <script>
+  function getParameterByName(name)
+{
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if (results == null) return "";
+    else return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+      var startDateInput = document.getElementById("date-input");
+    var endDateInput = document.getElementById("end-date-input");
+    startDateInput.value = getParameterByName("start_date");
+    endDateInput.value = getParameterByName("end_date");
+    var select = document.getElementById("time-interval");
+    var timeIntervalValue = getParameterByName("time_interval");
+    if (timeIntervalValue) {
+      select.value = timeIntervalValue
+      }
+
+
+    </script>
+  </body>
+</html>

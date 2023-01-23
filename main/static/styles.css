@@ -1,0 +1,74 @@
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 0;
+}
+
+h1 {
+text-align: center;
+margin: 20px 0;
+}
+
+form {
+display: flex;
+justify-content: center;
+align-items: center;
+margin: 20px 0;
+}
+
+button {
+padding: 12px 20px;
+margin: 8px 0;
+box-sizing: border-box;
+border: 2px solid #ccc;
+border-radius: 4px;
+}
+
+label {
+display: block;
+font-weight: bold;
+margin-right: 10px;
+}
+
+input[type="date"] {
+padding: 12px 20px;
+margin: 8px 0;
+box-sizing: border-box;
+border: 2px solid #ccc;
+border-radius: 4px;
+}
+
+select {
+padding: 12px 20px;
+margin: 8px 0;
+box-sizing: border-box;
+border: 2px solid #ccc;
+border-radius: 4px;
+}
+
+canvas {
+margin: 0 auto;
+display: block;
+}
+
+ul {
+list-style: none;
+margin: 20px 0;
+padding: 0;
+}
+
+li {
+margin-bottom: 10px;
+}
+
+#myChart {
+width: 75%;
+height: 60%;
+}
+
+.container {
+max-width: 1200px
+
+input, select {
+    margin-top: 10px;
+}
