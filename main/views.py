@@ -111,6 +111,24 @@ def lifestyle(request):
         # print(data)
         return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "summary_games": summary_games, "context": context})
 
+def admin(request):
+    if request.method == "GET":
+        start_date = request.GET.get("start_date", None)
+        end_date = request.GET.get("end_date", None)
+        users_data = database.get_admin_data_between_dates(start_date=start_date, end_date=end_date)
+        users_data = dict(sorted(users_data.items()))
+        for day in users_data:
+            users_data[day]['hours'] = sorted(users_data[day]['hours'], key=lambda x: x['hour'])
+        users_data_list = []
+        for day in users_data:
+            obj = users_data[day]
+            obj['day'] = day
+            users_data_list.append(obj)
+        context = {
+            'items': users_data_list,
+        }
+        return render(request, "admin_view.html", context)
+
 
 def tiredness(request):
 
