@@ -8,10 +8,31 @@
 
 
 
-    <style>
+  <style>
+    body{
+      background-color: rgb(1, 48, 102);
+      color: white;
+      font-weight: bold;
+    }
+    button{
+      width: 150px;
+      font-weight: bold;
+      border:black 3px solid;
+      background-color: rgb(0, 89, 223);
+      border-radius: 10px;
+      padding: 5px;
+      margin: 5px;
+      color: rgb(209, 209, 209);
+    }
+    button:hover{
+      background-color: rgb(1, 102, 255);
+      color: white;
+    }
+    button:active{
+      background-color: rgb(0, 72, 179);
+    }
 
-
-</style>
+  </style>
     <script>
   function createChart() {
   chartData = JSON.parse(JSON.stringify({{chart_data|safe}}));
