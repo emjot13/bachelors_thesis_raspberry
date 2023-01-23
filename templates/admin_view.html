@@ -37,11 +37,12 @@ window.location = currentUrl.toString();
 });
   </script>
 </form>
-<script>console.log({{items|safe}})</script>
+    {% if not items %}
+    <h1>No data to show</h1>
+    {% endif %}
   {% for day in items %}
     <div>Employees tiredness stats for {{ day.day }}</div>
           <canvas id="myChart-{{forloop.counter}}"></canvas>
-        <script>console.log({{day|safe}});</script>
     <script>
 
     console.log({{day|safe}});

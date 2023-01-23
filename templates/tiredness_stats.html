@@ -6,12 +6,6 @@
     <script src="{% static 'js/chart.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 
-
-
-    <style>
-
-
-</style>
     <script>
   function createChart() {
   chartData = JSON.parse(JSON.stringify({{chart_data|safe}}));
@@ -86,13 +80,9 @@ window.location = currentUrl.toString();
 </script>
 
 </form>
-
-
-    <ul>
-<!--      {% for item in items %}-->
-<!--      <li>Day: {{ item.day }}, <div>yawns: {{item.yawns}} times</div> <div>closed eyes for prolonged time: {{item.sleep}} times</div></li>-->
-<!--      {% endfor %}-->
-    </ul>
+        {% if not chart_data %}
+    <h1>No data to show</h1>
+    {% endif %}
 
   <canvas id="myChart"></canvas>
   <script>
