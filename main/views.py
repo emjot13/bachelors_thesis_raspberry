@@ -12,8 +12,8 @@ import database.client_games as database_games
 import utils.main as utils
 import json
 
-import hardware.distance as distance
-import hardware.photoresistor as room_light
+# import hardware.distance as distance
+# import hardware.photoresistor as room_light
 
 
 def start(request):
@@ -69,39 +69,6 @@ def lifestyle(request):
         end_date1 = request.POST.get("end1")
         first = database.find_data_in_date_range(start_date, end_date)
         second = database.find_data_in_date_range(start_date1, end_date1)
-<<<<<<< main/views.py
-        #print(list(zip(first, second)))
-        print(first)
-        labels = [item['hour'] for item in first[0]['hours']]
-        data_yawns_first = [item['yawns'] for item in first[0]['hours']]
-        data_sleep_first = [item['sleep'] for item in first[0]['hours']]
-
-        data_yawns_second = [item['yawns'] for item in second[0]['hours']]
-        data_sleep_second = [item['sleep'] for item in second[0]['hours']]
-
-        print(f"labels: {labels}")
-        context = {
-            'message': 'These are your tiredness stats',
-            'items': first,
-            'chart_data': {
-                'labels': labels,
-                'datasets': [{
-                    'label': 'Yawns',
-                    'data': data_yawns_first,
-                    'backgroundColor': 'rgba(255, 99, 132, 0.2)',
-                    'borderColor': 'rgba(255, 99, 132, 1)',
-                },
-                    {
-                    'label': 'Closed eyes',
-                    'data': data_sleep_first,
-                    'backgroundColor': 'rgba(55, 199, 132, 0.2)',
-                    'borderColor': 'rgba(55, 199, 132, 1)',
-                    }
-                ]
-            }
-        }
-=======
->>>>>>> main/views.py
         labels = [item['hour'] for item in first[0]['hours']]
         data_yawns_first = [item['yawns'] for item in first[0]['hours']]
         data_sleep_first = [item['sleep'] for item in first[0]['hours']]
@@ -142,31 +109,42 @@ def lifestyle(request):
         #print("summary_games =",summary_games)
         
         # print(data)
-<<<<<<< main/views.py
-        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "context": context})
-=======
         return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "summary_games": summary_games, "context": context})
->>>>>>> main/views.py
 
 
 def tiredness(request):
 
-    # print(days)
-    # print(old_days)
-    context = {
-        'message': 'These are your tiredness stats',
-        'items': data,
-        'chart_data': {
-    'labels': labels,
-    'datasets': [{
-        'label': 'Yawns',
-        'data': [item['yawns'] for item in data],
-        'backgroundColor': 'rgba(255, 99, 132, 0.2)',
-        'borderColor': 'rgba(255, 99, 132, 1)',
-    }]
-}
-    }
-    return render(request, 'tiredness_stats.html', context)
+    if request.method == "GET":
+        interval = request.GET.get("time_interval", None)
+        start_date = request.GET.get("start_date", None)
+        end_date = request.GET.get("end_date", None)
+        if interval:
+            interval = int(interval)
+
+        data = database.find_data_intervals_date_range(interval=interval, start_date=start_date, end_date=end_date)
+        labels = [item['day'].strftime("%m/%d/%Y %H:%M:%S") for item in data]
+        context = {
+            'message': 'These are your tiredness stats',
+            'items': data,
+            'chart_data': {
+                'labels': labels,
+                'datasets': [{
+                    'label': 'Yawns',
+                    'data': [item['yawns'] for item in data],
+                    'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+                    'borderColor': 'rgba(255, 99, 132, 1)',
+                },
+                    {
+                    'label': 'Closed eyes',
+                    'data': [item['sleep'] for item in data],
+                    'backgroundColor': 'rgba(55, 199, 132, 0.2)',
+                    'borderColor': 'rgba(55, 199, 132, 1)',
+                    }
+                ]
+            }
+        }
+        return render(request, 'tiredness_stats.html', context)
+
 
 #-----------------------GAMES------------------------
 

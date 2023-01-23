@@ -74,5 +74,5 @@ def populate_database_with_mock_data():
             # print(date)
 
 
-#generate_mock_data()
-#populate_database_with_mock_data()
+generate_mock_data()
+populate_database_with_mock_data()

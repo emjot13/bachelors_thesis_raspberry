@@ -5,7 +5,7 @@ import threading
 from os.path import exists
 from os import remove
 import database.client as database
-from hardware.buzzer import beep
+# from hardware.buzzer import beep
 from . import landmarks
 
 class FatigueDetector:
@@ -72,8 +72,8 @@ class FatigueDetector:
                     self.sleeping_counter += 1
                     frame_counter = 0
                     sleep = False
-                    buzzer = threading.Thread(target=beep)
-                    buzzer.start()
+                    # buzzer = threading.Thread(target=beep)
+                    # buzzer.start()
 
                 
                 elif eye_aspect_ratio < self.eye_aspect_ratio_threshold:
