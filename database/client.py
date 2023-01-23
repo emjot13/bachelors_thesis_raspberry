@@ -241,8 +241,12 @@ def get_admin_data_between_dates(start_date, end_date):
 
 def find_data_intervals_date_range(interval, start_date=None, end_date=None):
     items = []
-    interval = 15 if interval is None else interval
-    start_date = datetime.strptime(start_date, '%Y-%m-%d')
+    if interval is None:
+        interval = 15
+    if start_date is None:
+        start_date = datetime(2020, 1, 1)
+    else:
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
     if end_date is None or end_date == "":
         end_date = start_date + timedelta(days=1)
     else:

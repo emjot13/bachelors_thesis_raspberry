@@ -8,8 +8,10 @@ from ai.fatigue_detection.main import FatigueDetector
 import os
 import threading
 import database.client as database
+import database.client_games as database_games
 import utils.main as utils
-#
+import json
+
 # import hardware.distance as distance
 # import hardware.photoresistor as room_light
 
@@ -65,14 +67,49 @@ def lifestyle(request):
         end_date = request.POST.get("end")
         start_date1 = request.POST.get("start1")
         end_date1 = request.POST.get("end1")
-
         first = database.find_data_in_date_range(start_date, end_date)
         second = database.find_data_in_date_range(start_date1, end_date1)
-        # print(list(zip(first, second)))
+        labels = [item['hour'] for item in first[0]['hours']]
+        data_yawns_first = [item['yawns'] for item in first[0]['hours']]
+        data_sleep_first = [item['sleep'] for item in first[0]['hours']]
+
+        data_yawns_second = [item['yawns'] for item in second[0]['hours']]
+        data_sleep_second = [item['sleep'] for item in second[0]['hours']]
+
+        print(f"labels: {labels}")
+        context = {
+            'message': 'These are your tiredness stats',
+            'items': first,
+            'chart_data': {
+                'labels': labels,
+                'datasets': [{
+                    'label': 'Yawns',
+                    'data': data_yawns_first,
+                    'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+                    'borderColor': 'rgba(255, 99, 132, 1)',
+                },
+                    {
+                    'label': 'Closed eyes',
+                    'data': data_sleep_first,
+                    'backgroundColor': 'rgba(55, 199, 132, 0.2)',
+                    'borderColor': 'rgba(55, 199, 132, 1)',
+                    }
+                ]
+            }
+        }
         summary = utils.lifestyle_summary(first, second)
+        #games--------
+        first_game_math = database_games.find_data_in_date_range(start_date, end_date, "math")
+        second_game_math = database_games.find_data_in_date_range(start_date1, end_date1, "math")
+        first_game_memory = database_games.find_data_in_date_range(start_date, end_date, "memory")
+        second_game_memory = database_games.find_data_in_date_range(start_date1, end_date1, "memory")
+        summary_games = {"first": {"math": round(first_game_math[0]['average_score'], 2), "memory": round(first_game_memory[0]['average_score'],2)},
+         "second": {"math": round(second_game_math[0]['average_score'],2), "memory": round(second_game_memory[0]['average_score'],2)}
+        }
+        #print("summary_games =",summary_games)
         
         # print(data)
-        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary})
+        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "summary_games": summary_games, "context": context})
 
 def admin(request):
     if request.method == "GET":
@@ -94,24 +131,58 @@ def admin(request):
 
 
 def tiredness(request):
-    # data = database.get_all_data()
-    # print(data, type(data))
-    labels = [item['day'].strftime("%m/%d/%Y, %H:%M:%S") for item in data]
-    # old_days = [item['day'] for item in items]
 
-    # print(days)
-    # print(old_days)
-    context = {
-        'message': 'These are your tiredness stats',
-        'items': data,
-        'chart_data': {
-    'labels': labels,
-    'datasets': [{
-        'label': 'Yawns',
-        'data': [item['yawns'] for item in data],
-        'backgroundColor': 'rgba(255, 99, 132, 0.2)',
-        'borderColor': 'rgba(255, 99, 132, 1)',
-    }]
-}
-    }
-    return render(request, 'tiredness_stats.html', context)
+    if request.method == "GET":
+        interval = request.GET.get("time_interval", None)
+        start_date = request.GET.get("start_date", None)
+        end_date = request.GET.get("end_date", None)
+        if interval:
+            interval = int(interval)
+
+        data = database.find_data_intervals_date_range(interval=interval, start_date=start_date, end_date=end_date)
+        labels = [item['day'].strftime("%m/%d/%Y %H:%M:%S") for item in data]
+        context = {
+            'message': 'These are your tiredness stats',
+            'items': data,
+            'chart_data': {
+                'labels': labels,
+                'datasets': [{
+                    'label': 'Yawns',
+                    'data': [item['yawns'] for item in data],
+                    'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+                    'borderColor': 'rgba(255, 99, 132, 1)',
+                },
+                    {
+                    'label': 'Closed eyes',
+                    'data': [item['sleep'] for item in data],
+                    'backgroundColor': 'rgba(55, 199, 132, 0.2)',
+                    'borderColor': 'rgba(55, 199, 132, 1)',
+                    }
+                ]
+            }
+        }
+        return render(request, 'tiredness_stats.html', context)
+
+
+#-----------------------GAMES------------------------
+
+def games(request):
+    return render(request, 'games.html')
+
+def mathgame(request):
+    if request.method == 'POST':
+        date = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        database_games.insert_data(date, game, float(score))
+        return redirect(games)
+    return render(request, 'math_game.html')
+
+def memorygame(request):
+    if request.method == 'POST':
+        date = request.POST.get('data')
+        game = request.POST.get('game')
+        score = request.POST.get('score')
+        database_games.insert_data(date, game, float(score))
+        return redirect(games)
+    return render(request, 'memory_game.html')

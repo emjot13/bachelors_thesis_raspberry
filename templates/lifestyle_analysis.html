@@ -1,12 +1,45 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
     <title>Example Template</title>
+      <script src="{% static 'js/Chart.min.js' %}"></script>
     <style>
-    input {width: 100%; margin-bottom: 1em;}
+    input {
+      width: 100%; 
+      margin-bottom: 1em;
+    }
+    body{
+      background-color: rgb(1, 48, 102);
+      color: white;
+      font-weight: bold;
+    }
+    button{
+      width: 150px;
+      font-weight: bold;
+      border:black 3px solid;
+      background-color: rgb(0, 89, 223);
+      border-radius: 10px;
+      padding: 5px;
+      margin: 5px;
+      color: rgb(209, 209, 209);
+    }
+    button:hover{
+      background-color: rgb(1, 102, 255);
+      color: white;
+    }
+    button:active{
+      background-color: rgb(0, 72, 179);
+    }
+    .box{
+      border: rgb(255, 255, 255) 3px solid;
+      border-radius: 15px;
+      padding: 10px;
+    }
       </style>
   </head>
   <body>
+
 
     <div style="display: flex; justify-content: center;">
     <h1>Lifestyle analysis</h1>
@@ -16,10 +49,10 @@
 
         <div id="form" style="display: flex; justify-content: space-between;">
 
-        <div id="left-form" style="margin-left: 5em;">
+        <div class="box" id="left-form" style="margin-left: 5em;">
         <div>
 
-            <label for="start">Start date:</label>
+            <label for="start">Start date 1:</label>
 
             <input type="date" name="start">
 
@@ -27,18 +60,18 @@
 
         <div>
 
-            <label for="end">End date:</label>
+            <label for="end">End date 1:</label>
 
             <input type="date" name="end">
 
         </div>
         </div>
 
-        <div id="right-form" style="margin-right: 5em;">
+        <div class="box" id="right-form" style="margin-right: 5em;">
 
         <div>
 
-          <label for="start1">Start date1:</label>
+          <label for="start1">Start date 2:</label>
 
           <input type="date" name="start1">
 
@@ -46,7 +79,7 @@
 
       <div>
 
-          <label for="end1">End date1:</label>
+          <label for="end1">End date 2:</label>
 
           <input type="date" name="end1">
 
@@ -73,7 +106,7 @@
 
 <div style="display: flex; justify-content: space-around; margin-bottom: 4em;">
 
-<div style="margin-left: 5em;">
+<div class="box" style="margin-left: 5em;">
   <h2>
     Between {{ summary.first.start }} - {{summary.first.end}}
 
@@ -82,13 +115,15 @@
 <h3>    Total yawns: {{ summary.first.total_yawns }}</h3>
 <h3>    Average sleep per day: {{ summary.first.average_sleep}}</h3>
 <h3>    Average yawns per day: {{ summary.first.average_yawns}}</h3>
+<h3>    Average math game score: {{ summary_games.first.math }}</h3>
+<h3>    Average memory game score: {{ summary_games.first.memory }}</h3>
 
 
 
 
 </div>
 
-<div style="margin-right: 5em;">
+<div class="box" style="margin-right: 5em;">
 
   <h2>
     Between {{ summary.second.start }} - {{summary.second.end}}
@@ -98,6 +133,8 @@
 <h3>    Total yawns: {{ summary.second.total_yawns }}</h3>
 <h3>    Average sleep per day: {{ summary.second.average_sleep}}</h3>
 <h3>    Average yawns per day: {{ summary.second.average_yawns}}</h3>
+<h3>    Average math game score: {{ summary_games.second.math }}</h3>
+<h3>    Average memory game score: {{ summary_games.second.memory }}</h3>
 
 </div>
 
@@ -109,9 +146,11 @@
 <hr>
 {% for day, day1 in data %}
 
+    <script>console.log({{day|safe}});</script>
+
 <div style="display: flex; justify-content: space-between;">
 
-<div style="margin-left: 5em;">
+<div class="box" style="margin-left: 5em;">
   <div>
     <h2>Day: {{ day.day }}</h2>
     <h3>Total yawns: {{ day.total_yawns}} </h3>
@@ -123,6 +162,50 @@
 
     <h3>You started work at: {{ day.start_time }}</h3>
     <h3>You finished work at: {{ day.end_time }}</h3>
+      <canvas id="myChart-{{forloop.counter}}"></canvas>
+            <script>
+    var chartData = {{day.hours|safe}}
+    var labels = []
+    var data_yawns = []
+    var data_sleep = []
+    chartData.reduce((prev,curr)=>{
+    console.log(curr);
+    labels.push(curr.hour);
+    data_yawns.push(curr.yawns);
+    data_sleep.push(curr.sleep);
+    },[])
+    var ctx = document.getElementById('myChart-{{forloop.counter}}').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+              data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sleep',
+                data: data_sleep,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Yawns',
+                data: data_yawns,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+</script>
+
   </div>
   <div>
     <details>
@@ -147,7 +230,7 @@
   </div>
 
 
-  <div style="margin-right: 5em;">
+  <div class="box" style="margin-right: 5em;">
     <div>
       <h2>Day: {{ day1.day }}</h2>
       <h3>Total yawns: {{ day1.total_yawns}} </h3>
@@ -159,6 +242,49 @@
   
       <h3>You started work at: {{ day1.start_time }}</h3>
       <h3>You finished work at: {{ day1.end_time }}</h3>
+              <canvas id="myChart1-{{forloop.counter}}"></canvas>
+            <script>
+    var chartData = {{day1.hours|safe}}
+    var labels = []
+    var data_yawns = []
+    var data_sleep = []
+    chartData.reduce((prev,curr)=>{
+    console.log(curr);
+    labels.push(curr.hour);
+    data_yawns.push(curr.yawns);
+    data_sleep.push(curr.sleep);
+    },[])
+    var ctx = document.getElementById('myChart1-{{forloop.counter}}').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+              data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sleep',
+                data: data_sleep,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Yawns',
+                data: data_yawns,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+</script>
     </div>
       <div>
         <details>
@@ -185,12 +311,15 @@
 
 
 </div>
+
 <hr>
 {% endfor %}
 
 
 {% endif %}
 
-
+<!--  <script>-->
+<!--  window.addEventListener('load', createChart);-->
+<!--</script>-->
   </body>
 </html>
