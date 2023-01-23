@@ -69,7 +69,6 @@ def lifestyle(request):
         end_date1 = request.POST.get("end1")
         first = database.find_data_in_date_range(start_date, end_date)
         second = database.find_data_in_date_range(start_date1, end_date1)
-<<<<<<< main/views.py
         #print(list(zip(first, second)))
         print(first)
         labels = [item['hour'] for item in first[0]['hours']]
@@ -100,8 +99,6 @@ def lifestyle(request):
                 ]
             }
         }
-=======
->>>>>>> main/views.py
         labels = [item['hour'] for item in first[0]['hours']]
         data_yawns_first = [item['yawns'] for item in first[0]['hours']]
         data_sleep_first = [item['sleep'] for item in first[0]['hours']]
@@ -142,11 +139,7 @@ def lifestyle(request):
         #print("summary_games =",summary_games)
         
         # print(data)
-<<<<<<< main/views.py
-        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "context": context})
-=======
-        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "summary_games": summary_games, "context": context})
->>>>>>> main/views.py
+        return render(request, "lifestyle_analysis.html", {"data": zip(first, second), "summary": summary, "context": context, "summary_games": summary_games})
 
 
 def tiredness(request):
