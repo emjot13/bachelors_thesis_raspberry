@@ -11,14 +11,11 @@ COLLECTION_NAME = "fatigue"
 client = pymongo.MongoClient(f"mongodb://localhost:{PORT}")
 database = client[DATABASE_NAME]
 fatigue_collection = database[COLLECTION_NAME]
-#
+
 admin_client = pymongo.MongoClient("mongodb+srv://admin:admin@admin.lynvddt.mongodb.net/?retryWrites=true&w=majority")
 admin_database = admin_client["admin_base"]
 users_data_collection = admin_database["users_data"]
-# admin_db = admin_client.get_database()
 
-
-# fatigue_collection.insert_one({"id": USER_ID, "yawning": 0, "sleep": 0})
 
 
 def insert_data(yawns, sleep):
@@ -70,13 +67,6 @@ def populate_database_with_mock_data():
             sleep = int(line[2])
             fatigue_collection.insert_one({"day": date, "yawns": yawns, "sleep": sleep})
 
-            # date = datetime.strptime(line[0], '%d-%B-%Y %A')
-
-            # print(date)
-
-
-# generate_mock_data()
-# populate_database_with_mock_data()
 
 def send_daily_data_to_admin_base(date):
     start_date = datetime(date.year, date.month, date.day, 0, 1)
@@ -168,76 +158,6 @@ def send_daily_data_to_admin_base(date):
 
     users_data_collection.insert_one(result[0])
 
-# for entry in get_all_data():
-#     if datetime(2020, 3, 29, 0, 0) < entry['day'] < datetime(2020, 10, 24, 18):
-#         if entry['day'].hour == 17:
-#             send_daily_data_to_admin_base(entry['day'])
-#     else:
-#         if entry['day'].hour == 16:
-#             send_daily_data_to_admin_base(entry['day'])
-#send_daily_data_to_admin_base()
-
-def get_admin_data_between_dates(start_date, end_date):
-    if not start_date:
-        start_date = datetime(2020,1,1)
-        start_date = datetime.strftime(start_date, '%Y-%m-%d')
-    if not end_date:
-        end_date = datetime(2020,1,20)
-        end_date = datetime.strftime(end_date, '%Y-%m-%d')
-
-
-    # result = users_data_collection.aggregate([
-    #     {
-    #
-    # }])
-
-    result = users_data_collection.aggregate([
-        {
-            "$match": {
-                "day": {"$gte": start_date, "$lte": end_date}
-            }
-        },
-        {
-            "$unwind": "$hours"
-        },
-        {
-            "$group": {
-                "_id": {
-                    "day": "$day",
-                    "hour": "$hours.hour"
-                },
-                "avg_sleep_per_hour": {"$avg": "$avg_sleep_per_hour"},
-                "avg_yawns_per_hour": {"$avg": "$avg_yawns_per_hour"},
-                "sleep": {"$avg": "$hours.sleep"},
-                "yawns": {"$avg": "$hours.yawns"}
-            }
-        },
-        {
-            "$group": {
-                "_id": "$_id.day",
-                "hours": {
-                    "$push": {
-                        "hour": "$_id.hour",
-                        "sleep": "$sleep",
-                        "yawns": "$yawns"
-                    }
-                },
-                "avg_sleep_per_hour": {"$avg": "$avg_sleep_per_hour"},
-                "avg_yawns_per_hour": {"$avg": "$avg_yawns_per_hour"}
-            }
-        },
-        {
-            "$sort": {
-                "_id.hours": 1
-            }
-        }
-
-    ])
-    # print(list(result))
-    days = {}
-    for item in list(result):
-        days[item['_id']] = {'hours': item['hours'], 'avg_yawns_per_hour': item['avg_yawns_per_hour'], 'avg_sleep_per_hour': item['avg_sleep_per_hour']}
-    return days
 
 def find_data_intervals_date_range(interval, start_date=None, end_date=None):
     items = []
@@ -367,6 +287,5 @@ def find_data_in_date_range(start_date, end_date):
             hours[i]["hour"] = hours[i].pop("_id")
         day["hours"] = hours
 
-    # print(result)
 
     return result
