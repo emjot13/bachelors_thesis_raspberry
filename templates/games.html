@@ -1,34 +1,8 @@
 <!DOCTYPE html>
+{% load static %}
 <head>
-        <style>
-        body{
-                background-color:rgb(44, 51, 51);
-        }
-        .box {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-        }
-        button{
-                width: 200px;
-                font-weight: bold;
-                border:rgb(165, 201, 202) 3px solid;
-                background-color: rgb(57, 91, 100);
-                border-radius: 10px;
-                padding: 5px;
-                margin: 5px;
-                color: rgb(231, 246, 242);
-        }
-        button:hover{
-                background-color: rgb(75, 118, 130);
-                color: white;
-        }
-        button:active{
-                background-color: rgb(48, 77, 85);
-        }
-        </style>
-      </head>
+        <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
 <body>
 <div id="btn box" class="box">
         <form action="mathgame" method="GET">

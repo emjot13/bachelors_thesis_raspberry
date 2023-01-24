@@ -2,45 +2,9 @@
 {% load static %}
 <html lang="en">
   <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
     <title>Example Template</title>
       <script src="{% static 'js/Chart.min.js' %}"></script>
-    <style>
-    body{
-      background-color: rgb(44, 51, 51);
-      color: rgb(231, 246, 242);
-      font-weight: bold;
-    }
-    button, input{
-      width: 150px;
-      font-weight: bold;
-      border:rgb(165, 201, 202) 3px solid;
-      background-color: rgb(57, 91, 100);
-      border-radius: 10px;
-      padding: 5px;
-      margin: 5px;
-      color: rgb(231, 246, 242);
-    }
-    button:hover{
-      background-color: rgb(75, 118, 130);
-      color: white;
-    }
-    button:active{
-      background-color: rgb(48, 77, 85);
-    }
-    input {
-      width: 90%; 
-      margin-bottom: 1em;
-    }
-    .box{
-      border: rgb(165, 201, 202) 3px solid;
-      border-radius: 15px;
-      padding: 10px;
-    }
-    .list{
-      border-bottom: rgb(165, 201, 202) 2px solid;
-      border-top: rgb(165, 201, 202) 2px solid;
-    }
-      </style>
   </head>
   <body>
 
@@ -110,7 +74,7 @@
 
 <div style="display: flex; justify-content: space-around; margin-bottom: 4em;">
 
-<div class="box" style="margin-left: 5em;">
+<div class="box lifeday" style="margin-left: 5em;">
   <h2>
     Between {{ summary.first.start }} - {{summary.first.end}}
 
@@ -127,7 +91,7 @@
 
 </div>
 
-<div class="box" style="margin-right: 5em;">
+<div class="box lifeday" style="margin-right: 5em;">
 
   <h2>
     Between {{ summary.second.start }} - {{summary.second.end}}
@@ -154,7 +118,7 @@
 
 <div style="display: flex; justify-content: space-between;">
 
-<div class="box" style="margin-left: 5em;">
+<div class="lifeday" style="margin-left: 5em;">
   <div>
     <h2>Day: {{ day.day }}</h2>
     <h3>Total yawns: {{ day.total_yawns}} </h3>
@@ -220,7 +184,7 @@
     <ul style="padding: 0;">
 
     {% for hour_data in day.hours %}
-    <ul style="margin-bottom: 1em;">
+    <ul class="list" style="margin-bottom: 1em;">
    <li>Sleep till {{ hour_data.hour|add:"1" }}: {{ hour_data.sleep }} </li> 
     <li>Yawns till {{ hour_data.hour|add:"1" }}: {{ hour_data.yawns }} </li> 
     <li> Sleep between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_sleep }}</li>
@@ -234,7 +198,7 @@
   </div>
 
 
-  <div class="box" style="margin-right: 5em;">
+  <div class="lifeday" style="margin-right: 5em;">
     <div>
       <h2>Day: {{ day1.day }}</h2>
       <h3>Total yawns: {{ day1.total_yawns}} </h3>
@@ -299,7 +263,7 @@
         <ul style="padding: 0;">
 
         {% for hour_data in day1.hours %}
-        <ul style="margin-bottom: 1em;">
+        <ul class="list" style="margin-bottom: 1em;">
        <li>Sleep till {{ hour_data.hour|add:"1" }}: {{ hour_data.sleep }} </li> 
         <li>Yawns till {{ hour_data.hour|add:"1" }}: {{ hour_data.yawns }} </li> 
         <li> Sleep between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_sleep }}</li>
