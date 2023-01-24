@@ -36,8 +36,36 @@
       }
         </style>
     <title>Example Template</title>
-    <script src="{% static 'js/Chart.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <script src="{% static 'js/chart.min.js' %}"></script>
+    <style>
+      body{
+        background-color: rgb(44, 51, 51);
+        color: rgb(231, 246, 242);
+        font-weight: bold;
+      }
+      button, input, select{
+        width: 150px;
+        font-weight: bold;
+        border:rgb(165, 201, 202) 3px solid;
+        background-color: rgb(57, 91, 100);
+        border-radius: 10px;
+        padding: 5px;
+        margin: 5px;
+        color: rgb(231, 246, 242);
+      }
+      button:hover{
+        background-color: rgb(75, 118, 130);
+        color: white;
+      }
+      button:active{
+        background-color: rgb(48, 77, 85);
+      }
+      .box, h1{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
 
     <script>
   function createChart() {
@@ -61,12 +89,8 @@
   </head>
   <body>
     <h1>{{ message }}</h1>
-<form>
 
-  <div>
-
-  <div>
-
+<form class="box">
   <label for="date-input">Select Start Date:</label>
   <input type="date" id="date-input" name="start_date">
 
@@ -104,7 +128,8 @@ window.location = currentUrl.toString();
 </form>
 
 
-    <form>
+<form>
+<div class="box">
   <label for="time-interval">Select Time Interval:</label>
   <select id="time-interval" name="time-interval">
     <option value="1">1 min</option>
@@ -112,6 +137,7 @@ window.location = currentUrl.toString();
     <option value="15" >15 min</option>
     <option value="60">1 hour</option>
   </select>
+</div>
 <script>
   var select = document.getElementById("time-interval");
   select.value = "15";
