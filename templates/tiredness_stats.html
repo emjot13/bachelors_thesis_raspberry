@@ -2,8 +2,41 @@
 {% load static %}
 <html lang="en">
   <head>
+    <style>
+      input {
+        width: 100%; 
+        margin-bottom: 1em;
+      }
+      body{
+        background-color: rgb(1, 48, 102);
+        color: white;
+        font-weight: bold;
+      }
+      button{
+        width: 150px;
+        font-weight: bold;
+        border:black 3px solid;
+        background-color: rgb(0, 89, 223);
+        border-radius: 10px;
+        padding: 5px;
+        margin: 5px;
+        color: rgb(209, 209, 209);
+      }
+      button:hover{
+        background-color: rgb(1, 102, 255);
+        color: white;
+      }
+      button:active{
+        background-color: rgb(0, 72, 179);
+      }
+      .box{
+        border: rgb(255, 255, 255) 3px solid;
+        border-radius: 15px;
+        padding: 10px;
+      }
+        </style>
     <title>Example Template</title>
-    <script src="{% static 'js/chart.min.js' %}"></script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 
     <script>
@@ -28,13 +61,27 @@
   </head>
   <body>
     <h1>{{ message }}</h1>
-
 <form>
+
+  <div>
+
+  <div>
+
   <label for="date-input">Select Start Date:</label>
   <input type="date" id="date-input" name="start_date">
-  <label for="end-date-input">Select End Date:</label>
+
+</div>
+  
+<div>
+<label for="end-date-input">Select End Date:</label>
   <input type="date" id="end-date-input" name="end_date">
+</div>
+<div>
   <button type="button" id="submit-dates-btn">Submit</button>
+</div>
+</div>
+
+
   <script>
 
     var startDateInput = document.getElementById("date-input");

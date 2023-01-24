@@ -12,8 +12,8 @@ import database.client_games as database_games
 import utils.main as utils
 import json
 
-# import hardware.distance as distance
-# import hardware.photoresistor as room_light
+import hardware.distance as distance
+import hardware.photoresistor as room_light
 
 
 def start(request):
