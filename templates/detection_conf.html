@@ -2,7 +2,7 @@
 {% load static %}
 <html lang="en">
   <head>
-    <title>Example Template</title>
+    <title>Detection Config</title>
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
   </head>
   <body>
@@ -11,28 +11,28 @@
     <form action="detection_conf" method="POST">
         {% csrf_token %}
         <div class="grid">
-            <label for="closed_eyes_seconds_threshold">Number of seconds with closed eyes to count as sleeping</label>
+            <label class="detectlab" for="closed_eyes_seconds_threshold">Number of seconds with closed eyes to count as sleeping</label>
 
             <input class="width" type="number" value="3" name="closed_eyes_seconds_threshold">
 
-            <label for="fps">Number of FPS for analysis</label>
+            <label class="detectlab" for="fps">Number of FPS for analysis</label>
 
             <input class="width" type="number" value="24" name="fps">
 
-            <label for="eye_aspect_ratio_threshold">Eye aspect ratio threshold</label>
+            <label class="detectlab" for="eye_aspect_ratio_threshold">Eye aspect ratio threshold</label>
 
             <input class="width" type="number" value="0.25" step="0.01" name="eye_aspect_ratio_threshold">
 
-            <label for="yawn_threshold">Yawn threshold</label>
+            <label class="detectlab" for="yawn_threshold">Yawn threshold</label>
 
             <input class="width" type="number" value="10" name="yawn_threshold">
 
-            <label for="database_frequency">Frequency of database writes in seconds</label>
+            <label class="detectlab" for="database_frequency">Frequency of database writes in seconds</label>
 
             <input class="width" type="number" value="10" name="database_frequency">
-        </div>
-        <div>
-                <button style="font-size: 1.3em" type="submit">Start analysing</button>
+          <div class="detectsub">
+            <button style="font-size: 1.3em" type="submit">Start analysing</button>
+          </div>
         </div>
 </form>
 
