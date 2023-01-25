@@ -1,74 +1,83 @@
-body {
-font-family: Arial, sans-serif;
-margin: 0;
-padding: 0;
+body{
+    background-color: rgb(44, 51, 51);
+    color: rgb(231, 246, 242);
+    font-weight: bold;
 }
-
-h1 {
-text-align: center;
-margin: 20px 0;
-}
-
-form {
-display: flex;
-justify-content: center;
-align-items: center;
-margin: 20px 0;
-}
-
-button {
-padding: 12px 20px;
-margin: 8px 0;
-box-sizing: border-box;
-border: 2px solid #ccc;
-border-radius: 4px;
-}
-
-label {
-display: block;
-font-weight: bold;
-margin-right: 10px;
-}
-
-input[type="date"] {
-padding: 12px 20px;
-margin: 8px 0;
-box-sizing: border-box;
-border: 2px solid #ccc;
-border-radius: 4px;
-}
-
-select {
-padding: 12px 20px;
-margin: 8px 0;
-box-sizing: border-box;
-border: 2px solid #ccc;
-border-radius: 4px;
-}
-
-canvas {
-margin: 0 auto;
-display: block;
-}
-
-ul {
-list-style: none;
-margin: 20px 0;
-padding: 0;
-}
-
-li {
-margin-bottom: 10px;
-}
-
-#myChart {
-width: 75%;
-height: 60%;
-}
-
-.container {
-max-width: 1200px
-
-input, select {
-    margin-top: 10px;
-}
+  button, input, select{
+    width: 200px;
+    font-weight: bold;
+    border:rgb(165, 201, 202) 3px solid;
+    background-color: rgb(57, 91, 100);
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px;
+    color: rgb(231, 246, 242);
+  }
+  button:hover{
+    background-color: rgb(75, 118, 130);
+    color: white;
+  }
+  button:active{
+    background-color: rgb(48, 77, 85);
+  }
+  .box, form, label{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 10px;
+  }
+  .game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 445px;
+    height: 445px;
+    margin: 0 auto;
+  }
+  .game-card {
+    width: 100px;
+    height: 100px;
+    background-color: rgb(160, 160, 160);
+    border: 2px solid #000;
+    font-size: 48px;
+    text-align: center;
+    line-height: 100px;
+    color: #fff;
+  }
+  .game-card.matched {
+    background-color: rgb(32, 250, 138);
+  }
+  .game-card.flipped {
+    background-color: rgb(46, 46, 254);
+  }
+  .lifeday{
+    border: rgb(165, 201, 202) 3px solid;
+    border-radius: 15px;
+    padding: 10px;
+  }
+  .list{
+    border-bottom: rgb(165, 201, 202) 2px solid;
+    border-top: rgb(165, 201, 202) 2px solid;
+  }
+  .grid{
+    display: grid;
+    grid-template-columns: 60%  40%;
+    width: 400px;
+  }
+  .width{
+    width: 50%;
+    height: min-content;
+    text-align: center; 
+  }
+  .detectlab{
+    display: flex;
+    justify-content: center;
+    align-items:flex-start;
+    flex-direction: column;
+    margin: 10px;
+  }
+  .detectsub{
+    grid-column: span 2;
+    align-self: center;
+    margin-left: 20%;
+  }

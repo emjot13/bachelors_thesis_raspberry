@@ -2,6 +2,11 @@
 {% load static %}
 <html lang="en">
   <head>
+<<<<<<< HEAD
+    <title>Tiredness</title>
+    <script src="{% static 'js/chart.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+=======
     <style>
       input {
         width: 100%; 
@@ -67,6 +72,7 @@
       }
     </style>
 
+>>>>>>> main
     <script>
   function createChart() {
   chartData = JSON.parse(JSON.stringify({{chart_data|safe}}));
@@ -87,10 +93,12 @@
   }
     </script>
   </head>
-  <body>
-    <h1>{{ message }}</h1>
-
-<form class="box">
+<body>
+<div class="box">
+<h1>{{ message }}</h1>
+</div>
+<div class="box" style="flex-direction: row;">
+<form>
   <label for="date-input">Select Start Date:</label>
   <input type="date" id="date-input" name="start_date">
 
@@ -137,6 +145,7 @@ window.location = currentUrl.toString();
     <option value="15" >15 min</option>
     <option value="60">1 hour</option>
   </select>
+</div>
 </div>
 <script>
   var select = document.getElementById("time-interval");

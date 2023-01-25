@@ -1,47 +1,11 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
   <title>Math Game</title>
-  <style>
-    body{
-      background-color: rgb(44, 51, 51);
-      color: white;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    button, input{
-      width: 150px;
-      font-weight: bold;
-      border:rgb(165, 201, 202) 3px solid;
-      background-color: rgb(57, 91, 100);
-      border-radius: 10px;
-      padding: 5px;
-      margin: 5px;
-      color: rgb(231, 246, 242);
-    }
-    button:hover{
-      background-color: rgb(75, 118, 130);
-      color: white;
-    }
-    button:active{
-      background-color: rgb(48, 77, 85);
-    }
-    .box {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    input:hover{
-      background-color: rgb(75, 118, 130);
-      color: white;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 </head>
-<body>
+<body class="box">
   <form action="games" method="GET">{% csrf_token %}<div><button style="font-size: 1.3em" type="submit">Wróć</button></div></form>
   <div id="btn0" class="box">
     <p>Gotowy na dodawanie liczb?</p>

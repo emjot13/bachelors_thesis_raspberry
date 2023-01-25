@@ -1,88 +1,48 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
-    <title>Example Template</title>
-    <style>
-        body{
-                background-color: rgb(44, 51, 51);
-                color: rgb(231, 246, 242);
-                font-weight: bold;
-        }
-        .box {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-        }
-        button, input{
-                width: 200px;
-                font-weight: bold;
-                border:rgb(165, 201, 202) 3px solid;
-                background-color: rgb(57, 91, 100);
-                border-radius: 10px;
-                padding: 5px;
-                margin: 5px;
-                color: rgb(231, 246, 242);
-        }
-        input {width: 95%; margin-bottom: 1em; margin: 0;margin-top: 5px;}
-        button:hover{
-                background-color: rgb(75, 118, 130);
-                color: white;
-        }
-        button:active{
-                background-color: rgb(48, 77, 85);
-        }
-        div{
-                margin: 5px;
-        }
-          </style>
+    <title>Detection Config</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
   </head>
   <body>
    <div>
 
     <form action="detection_conf" method="POST">
         {% csrf_token %}
+        <div class="grid">
+            <label class="detectlab" for="closed_eyes_seconds_threshold">Number of seconds with closed eyes to count as sleeping</label>
 
-        <div>
-            <label for="closed_eyes_seconds_threshold">Number of seconds with closed eyes to count as sleeping</label>
+            <input class="width" type="number" value="3" name="closed_eyes_seconds_threshold">
 
+<<<<<<< HEAD
+            <label class="detectlab" for="fps">Number of FPS for analysis</label>
+=======
             <input type="number" value="2" name="closed_eyes_seconds_threshold">
+>>>>>>> main
 
-        </div>
+            <input class="width" type="number" value="24" name="fps">
 
+            <label class="detectlab" for="eye_aspect_ratio_threshold">Eye aspect ratio threshold</label>
 
-        <div>
+            <input class="width" type="number" value="0.25" step="0.01" name="eye_aspect_ratio_threshold">
 
-            <label for="fps">Number of FPS for analysis</label>
+            <label class="detectlab" for="yawn_threshold">Yawn threshold</label>
 
-            <input type="number" value="24" name="fps">
-
-        </div>
-
-        <div>
-
-            <label for="eye_aspect_ratio_threshold">Eye aspect ratio threshold</label>
-
+<<<<<<< HEAD
+            <input class="width" type="number" value="10" name="yawn_threshold">
+=======
             <input type="number" value="0.4" step="0.01" name="eye_aspect_ratio_threshold">
 
         </div>
+>>>>>>> main
 
-        <div>
-            <label for="yawn_threshold">Yawn threshold</label>
+            <label class="detectlab" for="database_frequency">Frequency of database writes in seconds</label>
 
-            <input type="number" value="10" name="yawn_threshold">
-
-        </div>
-
-
-        <div>
-            <label for="database_frequency">Frequency of database writes in seconds</label>
-
-            <input type="number" value="10" name="database_frequency">
-        </div>
-
-        <div>
-                <button style="font-size: 1.3em" type="submit">Start analysing</button>
+            <input class="width" type="number" value="10" name="database_frequency">
+          <div class="detectsub">
+            <button style="font-size: 1.3em" type="submit">Start analysing</button>
+          </div>
         </div>
 </form>
 
