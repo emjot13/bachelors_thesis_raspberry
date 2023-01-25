@@ -20,7 +20,7 @@ def photoresitor():
     while (GPIO.input(PHOTORESISTOR_PIN) == GPIO.LOW):
         count += 1
 
-    if not 400 <= count <= 11000:
+    if not 400 <= count <= 7000:
         GPIO.output(RED_LED_PIN, GPIO.HIGH)
     else:
         GPIO.output(RED_LED_PIN, GPIO.LOW)

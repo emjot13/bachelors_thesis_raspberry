@@ -28,7 +28,7 @@ def check_distance():
 
     travel_time = stop_time - start_time
     distance = (travel_time * SONIC_SPEED) / 2
-    print(distance)
+    # print(distance)
 
     if 46 <= distance <= 76:
         GPIO.output(GREEN_LED_PIN, GPIO.HIGH)
