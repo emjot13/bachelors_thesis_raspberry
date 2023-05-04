@@ -57,7 +57,7 @@
 
     </div>
 
-        <div style="display: flex; justify-content: center;">
+        <div style="display: flex; justify-content: center; margin-top: 1em;">
                 <button style="font-size: 1.3em" type="submit">Send</button>
         </div>
 </form>
@@ -185,7 +185,7 @@
 
     {% for hour_data in day.hours %}
     <ul class="list" style="margin-bottom: 1em;">
-   <li>Sleep till {{ hour_data.hour|add:"1" }}: {{ hour_data.sleep }} </li> 
+   <li>Sleep till {{ hour_data.hour|add:"1" }}:  <span style="font-weight: bolder;"> {{ hour_data.sleep }} </span> </li> 
     <li>Yawns till {{ hour_data.hour|add:"1" }}: {{ hour_data.yawns }} </li> 
     <li> Sleep between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_sleep }}</li>
     <li>Yawns between {{ hour_data.hour }}-{{ hour_data.hour|add:"1" }}: {{ hour_data.increase_yawns }}</li>

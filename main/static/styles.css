@@ -11,7 +11,9 @@ body{
     border-radius: 10px;
     padding: 5px;
     margin: 10px;
+    margin-top: 0.1em;
     color: rgb(231, 246, 242);
+    text-align: center;
   }
   button:hover{
     background-color: rgb(75, 118, 130);
@@ -26,6 +28,7 @@ body{
     align-items: center;
     flex-direction: column;
     margin: 10px;
+    margin-bottom: 0.1em;
   }
   .game-board {
     display: grid;
@@ -56,8 +59,12 @@ body{
     padding: 10px;
   }
   .list{
-    border-bottom: rgb(165, 201, 202) 2px solid;
-    border-top: rgb(165, 201, 202) 2px solid;
+    /* border-bottom: rgb(165, 201, 202) 2px solid;
+    border-top: rgb(165, 201, 202) 2px solid; */
+    border: rgb(165, 201, 202) 2px solid;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+
   }
   .grid{
     display: grid;
