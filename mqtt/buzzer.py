@@ -4,41 +4,51 @@ import paho.mqtt.client as mqtt
 import json
 from time import sleep
 
+MQTT_BROKER = "localhost"
+CLIENT_NAME = "buzzer"
+TOPIC, INFO = "ultrasonic-sensor/distance", "distance"
+DISTANCE_FROM_SCREEN_LOW_IN_CM = 45
+DISTANCE_FROM_SCREEN_HIGH_IN_CM = 76
+
 class Buzzer:
     def __init__(self, pin):
         self.pin = pin
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.OUT)
-        self.connect_to_mqtt()
+        self.__connect_to_mqtt()
         
-    def beep(self, duration=0.1):
+    def __beep(self, duration = 0.1):
         GPIO.output(self.pin, True)
         time.sleep(duration)
         GPIO.output(self.pin, False)
 
 
-    def connect_to_mqtt(self):
-        mqttBroker ="127.0.0.1"
-        client_name = "buzzer"
-        topic = 'ultrasonic-sensor/distance'
+    def __connect_to_mqtt(self):
+        self.client = mqtt.Client(CLIENT_NAME)
+        self.client.connect(MQTT_BROKER) 
 
-        client = mqtt.Client(client_name)
-        client.connect(mqttBroker) 
-        client.subscribe(topic)
-        client.on_message=self.on_message 
-        client.loop_forever()
-        
 
-    def on_message(self, client, userdata, message):
+    def start_listening(self):
+        self.client.subscribe(TOPIC)
+        self.client.on_message=self.__on_message 
+        self.client.loop_start()        
+
+    def stop_listening(self):
+        self.client.loop_stop()
+
+    def __on_message(self, client, userdata, message):
         message_decoded = json.loads(message.payload.decode("utf-8"))
-        distance = message_decoded.get("distance", 60)
+        distance = message_decoded.get(INFO, 60)
         print(distance)
-        if not (45 < distance < 76):
+        if not (DISTANCE_FROM_SCREEN_LOW_IN_CM < distance < DISTANCE_FROM_SCREEN_HIGH_IN_CM):
             print("here")
 
-
+    def __del__(self):
+        GPIO.cleanup()
 
 
 
 buzzer = Buzzer(23)
-
+buzzer.start_listening()
+sleep(3)
+buzzer.stop_listening()
