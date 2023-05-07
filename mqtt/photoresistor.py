@@ -11,7 +11,7 @@ TOPIC = 'room-light-sensor/count'
 TIME_BETWEEN_MEASUREMENTS = 0.3 # 0.3s
 
 
-class RoomLightSensor:
+class Photoresistor:
     def __init__(self, photoresistor_pin):
         self.photoresistor_pin = photoresistor_pin
         self.measuring = False
