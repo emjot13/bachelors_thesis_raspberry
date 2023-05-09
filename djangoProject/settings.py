@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main.apps.CsvReaderConfig'
+    'client_site.apps.CsvReaderConfig',
 ]
 
 MIDDLEWARE = [
@@ -133,4 +133,4 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_DIRS = [BASE_DIR / "main" / "static"]
+STATICFILES_DIRS = [BASE_DIR / "client_site" / "static"]

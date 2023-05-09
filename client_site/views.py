@@ -11,37 +11,56 @@ import database.client as database
 import database.client_games as database_games
 import utils.main as utils
 import json
-
+from .fatigue_service import FatigueDetectorService
 import hardware.distance as distance
 import hardware.photoresistor as room_light
+
+
+
 
 
 def start(request):
     return render(request, "start.html")
 
+def start_detecting(request):
+    detector_service.start_detector()
+
+    return redirect(start)
+
+def stop_detecting(request):
+    detector_service.stop_detector()
+
+    return redirect(start)
+
+
+detector_service = FatigueDetectorService()
+
 def detection_conf(request):
     if request.method == "POST":
         data = request.POST
+
         closed_eyes_seconds_threshold = int(data.get("closed_eyes_seconds_threshold"))
         fps = int(data.get("fps"))
         eye_aspect_ratio_threshold = float(data.get("eye_aspect_ratio_threshold"))
         yawn_threshold = int(data.get("yawn_threshold"))
         database_writes_frequency = int(data.get("database_frequency"))
-        
-        detector = FatigueDetector(closed_eyes_seconds_threshold, fps, eye_aspect_ratio_threshold, yawn_threshold, database_writes_frequency)
-        detector_thread = threading.Thread(target = detector.run)
-        detector_thread.start()
+        params = [
+            closed_eyes_seconds_threshold,
+            fps, 
+            eye_aspect_ratio_threshold,
+            yawn_threshold,
+            database_writes_frequency
+        ]
 
-        screen_distance = threading.Thread(target = distance.proper_distance_from_screen)
-        screen_distance.start()
+        detector_service.initialize_detector(params)
 
-        proper_room_light = threading.Thread(target = room_light.check_room_light)
-        proper_room_light.start()
+        # screen_distance = threading.Thread(target = distance.proper_distance_from_screen)
+        # screen_distance.start()
 
+        # proper_room_light = threading.Thread(target = room_light.check_room_light)
+        # proper_room_light.start()
 
         return render(request, "start.html")
-
-
 
     return render(request, "detection_conf.html")        
 
@@ -49,13 +68,6 @@ def shutdown(request):
     if request.method == "POST":
         os.system("sudo shutdown now")
     return render(request, "start.html")
-
-def pause(request):
-    if request.method == "POST":
-        pause = "logical_files/pause"
-        with open(pause, mode = "a"): pass
-    
-    return redirect(start)
 
 
 

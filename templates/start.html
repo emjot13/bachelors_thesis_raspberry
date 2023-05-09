@@ -11,25 +11,30 @@
                 {% csrf_token %}
 
                 <div class="finish">
+                        <button style="font-size: 1.3em" type="submit">Configuration</button>
+                </div>
+        </form>
+
+
+        <form action="start_detecting" method="GET">
+                {% csrf_token %}
+
+                <div class="finish">
                         <button style="font-size: 1.3em" type="submit">Start</button>
                 </div>
         </form>
 
-        <form action="shutdown" method="POST">
-                {% csrf_token %}
 
-                <div>
-                        <button style="font-size: 1.3em" type="submit">Shutdown camera</button>
-                </div>
-        </form>
 
-        <form action="pause" method="POST">
+        <form action="stop_detecting" method="POST">
                 {% csrf_token %}
 
                 <div>
                         <button style="font-size: 1.3em" type="submit">Pause</button>
                 </div>
         </form>
+
+
 
         <form action="tiredness" method="GET">
                 {% csrf_token %}
@@ -53,6 +58,17 @@
                 <div>
                         <button style="font-size: 1.3em" type="submit">Games</button>
                 </div>
+        </form>
+
+
+        <form action="shutdown" method="POST">
+                {% csrf_token %}
+
+                <div>
+                        <button style="font-size: 1.3em" type="submit">Shutdown camera</button>
+                </div>
+        </form>
+        
 
 </div>
 </body>
