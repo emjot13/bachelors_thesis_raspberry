@@ -1,11 +1,8 @@
-import copy
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
-import statsmodels.api as sm
-from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
 # Wczytanie danych
@@ -13,9 +10,6 @@ df = pd.read_csv('mock_data.csv', parse_dates=['Date'], index_col='Date')
 
 # Użycie kolumny 'Yawns' jako źródła danych
 df = df[['Yawns']]
-
-
-
 
 # Podział na dane treningowe i testowe
 train_size = int(len(df) * 0.8)
@@ -68,4 +62,3 @@ plt.plot(df.values[:18000], label='True Values')
 plt.plot(y_pred, label='Predicted Values')
 plt.legend()
 plt.show()
-
