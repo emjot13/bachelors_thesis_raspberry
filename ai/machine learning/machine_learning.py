@@ -4,6 +4,8 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
+import statsmodels.api as sm
+from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
 # Wczytanie danych
@@ -11,6 +13,9 @@ df = pd.read_csv('mock_data.csv', parse_dates=['Date'], index_col='Date')
 
 # Użycie kolumny 'Yawns' jako źródła danych
 df = df[['Yawns']]
+
+
+
 
 # Podział na dane treningowe i testowe
 train_size = int(len(df) * 0.8)
@@ -34,7 +39,7 @@ time_steps = 30
 X_train, y_train = create_dataset(train_data, time_steps)
 X_test, y_test = create_dataset(test_data, time_steps)
 
-# Reshape the input data to 3D for LSTM
+# Dopasowanie struktury danych do modelu
 X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
 
@@ -51,7 +56,7 @@ model.add(Dense(units=1))
 model.compile(optimizer='adam', loss='mean_squared_error')
 
 # Trenowanie modelu
-model.fit(X_train, y_train, epochs=25, batch_size=32)
+model.fit(X_train, y_train, epochs=2, batch_size=32)
 
 # Przewidywanie przyszlych danych
 y_pred = model.predict(X_test)
@@ -63,3 +68,4 @@ plt.plot(df.values[:18000], label='True Values')
 plt.plot(y_pred, label='Predicted Values')
 plt.legend()
 plt.show()
+

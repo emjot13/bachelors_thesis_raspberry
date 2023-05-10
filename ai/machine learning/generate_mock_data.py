@@ -60,6 +60,7 @@ def convert_day_ticks_to_FatigueLog(date, tick_array, yawns_array, sleeps_array,
     sleeps = 0
 
     def convert_tick_to_FatigueLog(tick, yawn, sleep):
+        day_progress = tick / (8*60*(60/tick_interval))
         timestamp = copy(date)
         shift_hour = int((tick * tick_interval) / 60 // 60)
         timestamp = timestamp.replace(hour=8 + shift_hour)
@@ -69,7 +70,7 @@ def convert_day_ticks_to_FatigueLog(date, tick_array, yawns_array, sleeps_array,
         tick -= shift_minute * (60 / tick_interval)
         shift_second = int(tick * tick_interval)
         timestamp = timestamp.replace(second=shift_second)
-        return FatigueLog(timestamp, yawns, sleeps, bool(yawn), bool(sleep))
+        return FatigueLog(timestamp, yawns, sleeps, int(yawn), int(sleep), day_progress)
 
     fatigue_logs = []
     for i in range(0, len(tick_array)):
@@ -136,7 +137,7 @@ def generate_in_date_range(start_date, end_date, skip_holidays=True, forced_star
 # Zapis logow do pliku
 def write_to_file(logs):
     with open('./mock_data.csv', 'w') as file:
-        file.write('Date,Yawns,Sleeps,Yawns_increase,Sleeps_increase\n')
+        file.write('Date,Yawns,Sleeps,Yawns_increase,Sleeps_increase,Day_progress\n')
         for day in logs:
             for log in day:
                 file.write(log.__str__() + '\n')
