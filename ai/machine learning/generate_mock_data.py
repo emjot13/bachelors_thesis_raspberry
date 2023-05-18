@@ -17,7 +17,7 @@ def is_holiday_in_poland(date):
 
 
 # Funkcja generuje dane dla jednego dnia
-def generate_one_day(start_hour=8, shift_duration=8, tick_interval=30):
+def generate_one_day(date, start_hour=8, shift_duration=8, tick_interval=30):
     shift_tick_length = shift_duration * 60 * (
             60 / tick_interval)  # Zapisanie dlugosci zmiany w tickach na potrzeby generowania
     shift_tick_regular_finish_time = 8 * 60 * (
@@ -33,6 +33,11 @@ def generate_one_day(start_hour=8, shift_duration=8, tick_interval=30):
     # probability_distribution
     while current_tick < shift_tick_end:
         acceptance_prob = probability_distribution(current_tick / shift_tick_regular_finish_time)  # Szansa w danym ticku
+        if date.weekday() == 1:
+            acceptance_prob*=1.2
+        if date.weekday() == 5:
+            acceptance_prob*=0.9
+
         acceptance_history.append(acceptance_prob)
         ticks.append(current_tick)
         # Losowanie czy w danym ticku bylo ziewane / spane
@@ -60,7 +65,7 @@ def convert_day_ticks_to_FatigueLog(date, tick_array, yawns_array, sleeps_array,
     sleeps = 0
 
     def convert_tick_to_FatigueLog(tick, yawn, sleep):
-        day_progress = tick / (8*60*(60/tick_interval))
+        # day_progress = tick / (8*60*(60/tick_interval))
         timestamp = copy(date)
         shift_hour = int((tick * tick_interval) / 60 // 60)
         timestamp = timestamp.replace(hour=8 + shift_hour)
@@ -70,7 +75,7 @@ def convert_day_ticks_to_FatigueLog(date, tick_array, yawns_array, sleeps_array,
         tick -= shift_minute * (60 / tick_interval)
         shift_second = int(tick * tick_interval)
         timestamp = timestamp.replace(second=shift_second)
-        return FatigueLog(timestamp, yawns, sleeps, int(yawn), int(sleep), day_progress)
+        return FatigueLog(timestamp, yawns, sleeps, int(yawn), int(sleep))
 
     fatigue_logs = []
     for i in range(0, len(tick_array)):
@@ -123,7 +128,7 @@ def generate_in_date_range(start_date, end_date, skip_holidays=True, forced_star
         shift_hours = generate_shift_times(forced_start_hour, forced_finish_hour,
                                            forced_shift_length, possible_shift_lengths)
 
-        ticks, yawns, sleeps = generate_one_day(shift_hours[0], shift_hours[2])
+        ticks, yawns, sleeps = generate_one_day(current_date, shift_hours[0], shift_hours[2])
         day_FatigueLog = convert_day_ticks_to_FatigueLog(current_date, ticks, yawns, sleeps)
         all_logs.append(day_FatigueLog)
         current_date += timedelta(hours=24)
@@ -137,10 +142,10 @@ def generate_in_date_range(start_date, end_date, skip_holidays=True, forced_star
 # Zapis logow do pliku
 def write_to_file(logs):
     with open('./mock_data.csv', 'w') as file:
-        file.write('Date,Yawns,Sleeps,Yawns_increase,Sleeps_increase,Day_progress\n')
+        file.write('Date,Yawns,Sleeps,Yawns_increase,Sleeps_increase\n')
         for day in logs:
             for log in day:
                 file.write(log.__str__() + '\n')
 
 
-generate_in_date_range(datetime(2023, 1, 10), datetime(2023, 4, 20))
+generate_in_date_range(datetime(2023, 1, 10), datetime(2023, 10, 20), forced_start_hour=8, forced_finish_hour=16)
