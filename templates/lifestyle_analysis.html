@@ -142,7 +142,7 @@
     data_yawns.push(curr.yawns);
     data_sleep.push(curr.sleep);
     },[])
-    var ctx = document.getElementById('myChart-{{forloop.counter}}').getContext('2d');
+    var ctx = document.getElementById('myChart-{{ forloop.counter }}').getContext('2d');
     var chart = new Chart(ctx, {
       type: 'line',
               data: {

@@ -11,9 +11,68 @@ import database.client as database
 import database.client_games as database_games
 import utils.main as utils
 import json
-from .fatigue_service import FatigueDetectorService
+
+from .services.fatigue_service import FatigueDetectorService
+# from  .fatigue_service import FatigueDetectorService
 import hardware.distance as distance
 import hardware.photoresistor as room_light
+from django.http import StreamingHttpResponse
+import time
+import datetime
+import paho.mqtt.client as mqtt
+from django.views.decorators.http import condition
+# from mqtt_v2.photoresistor_config import MqttSubscriber
+from .services.photoresistor_config_service import PhotoresistorConfigService
+
+
+
+
+photoresistor_config_service = PhotoresistorConfigService()
+def photoresistor_stream(request):
+    print("called stream")
+    def event_stream():
+        print("In event stream")
+        print("running: ", photoresistor_config_service.is_running)
+        while photoresistor_config_service.is_running:
+            value = photoresistor_config_service.photoresistor_config_current_value()
+            print("backend: ", value)
+            time.sleep(1)
+            yield 'data: %s\n\n' % value
+        
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+    
+
+
+def photoresistor_config(request):
+    print("config")
+    print("-------------------------------")
+    # print(request.POST, request.POST.get('minThreshold'), request.POST.get('action'))
+    print(request.method)
+    if request.method == 'POST':
+        data = request.POST
+        print("data: ", data)
+        action = data.get('action')
+        min_threshold = data.get('minThreshold')
+        print(action, min_threshold)
+        if action == 'start':
+            photoresistor_config_service.initialize_photoresistor_config()
+            photoresistor_config_service.start_photoresistor_config()
+
+        elif action == 'stop':
+            photoresistor_config_service.stop_photoresistor_config()
+
+        # Check if the thresholds form is being submitted
+        elif 'thresholdsForm' in request.POST:
+            min_threshold = request.POST.get('minThreshold')
+            max_threshold = request.POST.get('maxThreshold')
+            print(min_threshold)
+       
+        return render(request, 'SSE.html', {"first": False})
+
+    return render(request, 'SSE.html', {"first": True})
+
+
+
 
 
 

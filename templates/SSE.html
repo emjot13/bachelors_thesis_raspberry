@@ -1,0 +1,189 @@
+<!-- sse_example.html -->
+<!-- <!DOCTYPE html>
+<html>
+<body>
+
+<h1>Getting server updates</h1>
+<div id="result"></div>
+
+<script>
+if(typeof(EventSource) !== "undefined") {
+  var source = new EventSource("{% url 'photoresistor_stream' %}");
+
+  source.onmessage = function(event) {
+    document.getElementById("result").innerHTML += <h3> event.data </h3> + "<br>";
+  };
+} else {
+  document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+}
+</script>
+
+</body>
+</html> -->
+
+
+<!-- --------------------------------------------- Minimal working example above --------------------------------------------- -->
+
+
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+  <style>
+    /* Center align elements */
+    body, .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #description {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #chartContainer {
+      height: 300px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    #thresholdForm {
+      margin-bottom: 60px;
+    }
+
+    /* Style the buttons */
+    button {
+      margin: 0 5px;
+      padding: 10px 15px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Style the input fields */
+    input[type="number"] {
+      padding: 5px;
+      width: 100px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+</head>
+<body>
+  <div id="description">
+    <h1>Getting photoresistor values</h1>
+  </div>
+
+  <div>
+    <canvas id="chartContainer"></canvas>
+  </div>
+
+
+
+  <div>
+    <form id="thresholdForm" method="POST">
+    {% csrf_token %}
+
+    <label for="minThreshold">Minimum light value for your room: </label>
+    <input type="number" name="minThreshold" value="5000"/>
+    <br/>
+    <label for="maxThreshold">Maximum light value for your room:</label>
+    <input type="number" name="maxThreshold" value="15000"/>
+    <br>
+    <div class="center">
+    <button style="font-size: 1.3em" type="submit">Set config values</button>
+    </div>
+    </form>
+  </div>
+
+  <div>
+  <form id="start/stop" method="post">
+    {% csrf_token %}
+    <button type="submit" name="action" action="photoresistor_config" value="start" onclick="generateChart()">Start config measurements</button>
+    <button type="button" name="action" action="photoresistor_config" onclick="stopStreaming()" value="stop">Stop config measurements</button>
+  </form>
+</div>
+
+  <script>
+
+let streamingActive = true;
+
+// Create a chart context
+var ctx = document.getElementById('chartContainer').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Light Level',
+        data: [],
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          display: false
+        },
+        y: {
+          suggestedMin: 0,
+          suggestedMax: 1023
+        }
+      }
+    }
+  });;
+
+
+var source;
+// Function to generate the chart
+function generateChart() {
+  // EventSource to receive SSE updates
+  if (typeof(EventSource) !== 'undefined') {
+    source = new EventSource('{% url "photoresistor_stream" %}');
+    console.log("created event source")
+    source.onmessage = function(event) {
+    
+    //   if (!streamingActive) {
+    //     source.close();
+    //     return;
+    //   }
+
+      var lightValue = parseInt(event.data);
+      console.log(lightValue)
+      // Update the chart and add the data point
+      chart.data.labels.push('');
+      chart.data.datasets[0].data.push(lightValue);
+      chart.update();
+    };
+  } 
+}
+
+// Generate an empty chart initially
+// generateChart();
+
+// Function to stop streaming and disable further updates
+function stopStreaming() {
+
+  fetch('{% url "photoresistor_config" %}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: 'action=stop'
+  })
+  streamingActive = false;
+  source.close();
+}
+
+  </script>
+</body>
+</html>
