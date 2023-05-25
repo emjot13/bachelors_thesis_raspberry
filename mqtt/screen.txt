@@ -1,0 +1,2 @@
+https://www.waveshare.com/wiki/1.54inch_e-Paper_Module_Manual#Working_With_Arduino
+https://github.com/waveshare/e-Paper

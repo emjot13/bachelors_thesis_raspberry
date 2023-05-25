@@ -11,9 +11,101 @@ import database.client as database
 import database.client_games as database_games
 import utils.main as utils
 import json
-from .fatigue_service import FatigueDetectorService
+
+from .services.fatigue_service import FatigueDetectorService
+# from  .fatigue_service import FatigueDetectorService
 import hardware.distance as distance
 import hardware.photoresistor as room_light
+from django.http import StreamingHttpResponse
+import time
+import datetime
+import paho.mqtt.client as mqtt
+from django.views.decorators.http import condition
+# from mqtt_v2.photoresistor_config import MqttSubscriber
+from .services.photoresistor_config_service import PhotoresistorConfigService
+from .services.distance_sensor_config_service import DistanceSensorConfigService
+
+from .services.utils.hardware_config import min_max_values_for_hardware_component, modify_min_max_values_for_hardware_component, HardwareComponent 
+
+from django.http import HttpResponse
+
+
+
+photoresistor_config_service = PhotoresistorConfigService()
+def photoresistor_stream(request):
+    print("called stream")
+    def event_stream():
+        print("In event stream")
+        print("running: ", photoresistor_config_service.is_running)
+        while photoresistor_config_service.is_running:
+            value = photoresistor_config_service.photoresistor_config_current_value()
+            print("backend: ", value)
+            time.sleep(1)
+            yield 'data: %s\n\n' % value       
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+    
+def photoresistor_config(request):
+    if request.method == 'POST':
+        data = request.POST
+        action = data.get('action')
+        min_threshold = data.get('minThreshold')
+        max_threshold = data.get('maxThreshold')
+
+        print(action, min_threshold)
+        if action == 'start':
+            photoresistor_config_service.initialize_photoresistor_config()
+            photoresistor_config_service.start_photoresistor_config()
+
+        if action == 'stop':
+            photoresistor_config_service.stop_photoresistor_config()
+
+        if min_threshold and max_threshold:
+            print(min_threshold, max_threshold)
+            modify_min_max_values_for_hardware_component(HardwareComponent.Photoresistor, min_threshold, max_threshold)
+            return render(request, 'photoresistor_config.html', {"current_min_threshold": min_threshold, "current_max_threshold": max_threshold})
+
+    current_min_threshold, current_max_threshold = min_max_values_for_hardware_component(HardwareComponent.Photoresistor)
+    return render(request, 'photoresistor_config.html', {"current_min_threshold": current_min_threshold, "current_max_threshold": current_max_threshold})
+
+
+# photoresistor_config_service = PhotoresistorConfigService()
+distance_sensor_config_service = DistanceSensorConfigService()
+def distance_sensor_stream(request):
+    print("called stream")
+    def event_stream():
+        print("In event stream")
+        while distance_sensor_config_service.is_running:
+            value = distance_sensor_config_service.distance_sensor_config_current_value()
+            print("backend: ", value)
+            time.sleep(1)
+            yield 'data: %s\n\n' % value       
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+
+def distance_sensor_config(request):
+    if request.method == 'POST':
+        data = request.POST
+        action = data.get('action')
+        min_threshold = data.get('minThreshold')
+        max_threshold = data.get('maxThreshold')
+
+        print(action, min_threshold)
+        if action == 'start':
+            distance_sensor_config_service.initialize_distance_sensor_config()
+            distance_sensor_config_service.start_distance_sensor_config()
+
+        if action == 'stop':
+            distance_sensor_config_service.stop_distance_sensor_config()
+
+        if min_threshold and max_threshold:
+            print(min_threshold, max_threshold)
+            modify_min_max_values_for_hardware_component(HardwareComponent.Distance_sensor, min_threshold, max_threshold)
+            return render(request, 'distance_sensor_config.html', {"current_min_threshold": min_threshold, "current_max_threshold": max_threshold})
+
+    current_min_threshold, current_max_threshold = min_max_values_for_hardware_component(HardwareComponent.Photoresistor)
+    return render(request, 'distance_sensor_config.html', {"current_min_threshold": current_min_threshold, "current_max_threshold": current_max_threshold})
+
+
+
 
 
 
@@ -22,18 +114,18 @@ import hardware.photoresistor as room_light
 def start(request):
     return render(request, "start.html")
 
+
+detector_service = FatigueDetectorService()
+
 def start_detecting(request):
     detector_service.start_detector()
-
     return redirect(start)
 
 def stop_detecting(request):
     detector_service.stop_detector()
-
     return redirect(start)
 
 
-detector_service = FatigueDetectorService()
 
 def detection_conf(request):
     if request.method == "POST":

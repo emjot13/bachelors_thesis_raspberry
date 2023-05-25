@@ -6,8 +6,8 @@ import paho.mqtt.client as mqtt
 
 
 MQTT_BROKER ="localhost" 
-CLIENT_NAME = "RoomLightSensor"
-TOPIC = 'room-light-sensor/count'
+CLIENT_NAME = "Photoresistor"
+TOPIC, INFO =  "photoresistor/count", "count"
 TIME_BETWEEN_MEASUREMENTS = 0.3 # 0.3s
 
 
@@ -29,7 +29,7 @@ class Photoresistor:
         self.mqtt_client = mqtt_client
 
     def __publish_count(self, count):
-        payload = json.dumps({'count': count})
+        payload = json.dumps({INFO: count})
         self.mqtt_client.publish(TOPIC, payload)
 
     def __measure_count(self):
@@ -62,6 +62,8 @@ class Photoresistor:
         GPIO.cleanup()
 
 
-sensor = RoomLightSensor(photoresistor_pin=6)
+sensor = Photoresistor(photoresistor_pin=6)
 
 sensor.start_measurement()
+# time.sleep(2000)
+# sensor.stop_measurement()

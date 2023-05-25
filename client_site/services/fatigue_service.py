@@ -1,7 +1,9 @@
 from typing import Tuple
-from ai.fatigue_detection.mainv2 import FatigueDetector
+from ai.fatigue_detection.main import FatigueDetector
+from .utils.singleton import Singleton
+from .utils.decorators import check_initialized
 
-class FatigueDetectorService:
+class FatigueDetectorService(metaclass = Singleton):
     def __init__(self) -> None:
         self.detector = None
 
@@ -9,10 +11,10 @@ class FatigueDetectorService:
         if self.detector is None:
             self.detector = FatigueDetector(*params)
 
+    @check_initialized('detector')
     def start_detector(self) -> None:
-        if self.detector is not None:
-            self.detector.start()
+        self.detector.start()
 
+    @check_initialized('detector')
     def stop_detector(self) -> None:
-        if self.detector is not None:
-            self.detector.stop()
+        self.detector.stop()
