@@ -2,11 +2,12 @@ import paho.mqtt.client as mqtt
 import json
 import time
 
+TOPIC, INFO = 'distance_sensor/distance_in_cm', "distance_in_cm"
 BROKER = "localhost"
-CLIENT_NAME = "photoresistor_config"
+CLIENT_NAME = "distance_sensor_config"
 
-class PhotoresistorConfig:
-    def __init__(self, topic = "count"):
+class DistanceSensorConfig:
+    def __init__(self, topic = TOPIC):
         self.__client = mqtt.Client()
         self.__client.on_message = self.__on_message
         self.__current_measurement = 0
@@ -33,9 +34,9 @@ class PhotoresistorConfig:
     
     def __on_message(self, client, userdata, message):
         payload = json.loads(message.payload.decode("utf-8"))
-        count = payload["count"]
-        print("PhotoresistorConfig: ", count)
+        distance_in_cm = payload[INFO]
+        print("Distance: ", distance_in_cm)
 
-        self.__current_measurement = count
+        self.__current_measurement = distance_in_cm
 
 

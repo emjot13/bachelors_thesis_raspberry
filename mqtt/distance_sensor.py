@@ -6,8 +6,8 @@ import paho.mqtt.client as mqtt
 
 
 MQTT_BROKER ="localhost" 
-CLIENT_NAME = "UltrasonicSensor"
-TOPIC = 'ultrasonic-sensor/distance'
+CLIENT_NAME = "DistanceSensor"
+TOPIC, INFO = 'distance_sensor/distance_in_cm', "distance_in_cm"
 TRIGGER_SENSOR_TIME = 0.00001 # 10us
 SONIC_SPEED_IN_CM_PER_SEC = 34300 
 TIME_BETWEEN_MEASUREMENTS = 0.1 # 100ms
@@ -28,7 +28,7 @@ class UltrasonicSensor:
 
     def __set_up_gpio(self):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
+        # GPIO.setwarnings(False)
         GPIO.setup(self.trig_pin, GPIO.OUT)
         GPIO.setup(self.echo_pin, GPIO.IN)
 
@@ -38,8 +38,8 @@ class UltrasonicSensor:
         self.mqtt_client = mqtt_client
 
 
-    def __publish_distance(self, distance):
-        payload = json.dumps({'distance': distance})
+    def __publish_distance(self, distance_in_cm):
+        payload = json.dumps({INFO: distance_in_cm})
         self.mqtt_client.publish(TOPIC, payload)
 
 
@@ -54,6 +54,7 @@ class UltrasonicSensor:
             # Set trigger to LOW
             GPIO.output(self.trig_pin, GPIO.LOW)
 
+            start_time = time.time()
 
             while GPIO.input(self.echo_pin) == GPIO.LOW:
                 start_time = time.time()
@@ -66,6 +67,7 @@ class UltrasonicSensor:
             
             distance_in_cm = self.calculate_distance_in_cm(travel_time)
 
+            print(distance_in_cm)
             self.__publish_distance(distance_in_cm)
 
             time.sleep(TIME_BETWEEN_MEASUREMENTS)

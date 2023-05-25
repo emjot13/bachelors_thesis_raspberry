@@ -38,7 +38,7 @@ if(typeof(EventSource) !== "undefined") {
       align-items: center;
     }
 
-    #description {
+    #description, #current_values {
       text-align: center;
       margin-bottom: 20px;
     }
@@ -75,6 +75,15 @@ if(typeof(EventSource) !== "undefined") {
   <script src="{% static 'js/Chart.min.js' %}"></script>
 </head>
 <body>
+
+<div id="current_values">
+  <h3> Current minimum threshold: {{ current_min_threshold }}</h3>
+  <h3> Current maximum threshold: {{ current_max_threshold }}</h3>
+  <p>If the light intensity is lower or higher, you will see a red led light up</p>
+
+</div>
+
+
   <div id="description">
     <h1>Getting photoresistor values</h1>
   </div>
@@ -104,18 +113,20 @@ if(typeof(EventSource) !== "undefined") {
   <div>
   <form id="start/stop" method="post">
     {% csrf_token %}
-    <button type="submit" name="action" action="photoresistor_config" value="start" onclick="generateChart()">Start config measurements</button>
+    <button type="button" name="action" action="photoresistor_config" value="start" onclick="updateChart()">Start config measurements</button>
     <button type="button" name="action" action="photoresistor_config" onclick="stopStreaming()" value="stop">Stop config measurements</button>
   </form>
 </div>
 
   <script>
-
-let streamingActive = true;
-
+// let streamingActive = true;
 // Create a chart context
-var ctx = document.getElementById('chartContainer').getContext('2d');
-var chart = new Chart(ctx, {
+var chart;
+
+function generateEmptyChart() {
+  console.log("generating empty chart")
+  var ctx = document.getElementById('chartContainer').getContext('2d');
+  chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: [],
@@ -141,21 +152,21 @@ var chart = new Chart(ctx, {
     }
   });;
 
+}
 
+generateEmptyChart()
 var source;
 // Function to generate the chart
-function generateChart() {
+function updateChart() {
   // EventSource to receive SSE updates
   if (typeof(EventSource) !== 'undefined') {
     source = new EventSource('{% url "photoresistor_stream" %}');
     console.log("created event source")
     source.onmessage = function(event) {
-    
     //   if (!streamingActive) {
     //     source.close();
     //     return;
     //   }
-
       var lightValue = parseInt(event.data);
       console.log(lightValue)
       // Update the chart and add the data point
@@ -163,6 +174,18 @@ function generateChart() {
       chart.data.datasets[0].data.push(lightValue);
       chart.update();
     };
+
+
+    fetch('{% url "photoresistor_config" %}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: 'action=start'
+  })
+
+
   } 
 }
 
@@ -181,6 +204,7 @@ function stopStreaming() {
     body: 'action=stop'
   })
   streamingActive = false;
+  console.log("closing source")
   source.close();
 }
 

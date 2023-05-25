@@ -15,6 +15,8 @@ urlpatterns = [
     path('memorygame', views.memorygame, name='memorygame'),
     path('photoresistor_stream/', views.photoresistor_stream, name='photoresistor_stream'),
     path('photoresistor_config/', views.photoresistor_config, name='photoresistor_config'),
+    path('distance_sensor_stream/', views.distance_sensor_stream, name='distance_sensor_stream'),
+    path('distance_sensor_config/', views.distance_sensor_config, name='distance_sensor_config'),
     # path('mqtt/<topic>/', views.mqtt_sse, name='mqtt_sse'),
     # path('mqtt-data/', views.mqtt_subscribe, name='mqtt_data')
 

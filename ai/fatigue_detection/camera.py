@@ -1,5 +1,6 @@
-class Camera:
+# not used, here so that it can be developed further if needed
 
+class Camera:
     def camera(self, frame, eye, gray, rect, ear):  # enables real-time view from camera
         shape = self.PREDICTOR(gray, rect)
         shape = face_utils.shape_to_np(shape)

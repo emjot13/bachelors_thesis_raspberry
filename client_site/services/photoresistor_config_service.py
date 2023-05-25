@@ -1,4 +1,4 @@
-from mqtt_v2.photoresistor_config import PhotoresistorConfig
+from mqtt_config.photoresistor_config import PhotoresistorConfig
 from .utils.singleton import Singleton
 from .utils.decorators import check_initialized
 
