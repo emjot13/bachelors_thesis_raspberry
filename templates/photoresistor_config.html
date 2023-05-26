@@ -119,10 +119,8 @@ if(typeof(EventSource) !== "undefined") {
 </div>
 
   <script>
-// let streamingActive = true;
-// Create a chart context
-var chart;
 
+var chart;
 function generateEmptyChart() {
   console.log("generating empty chart")
   var ctx = document.getElementById('chartContainer').getContext('2d');
@@ -163,11 +161,7 @@ function updateChart() {
     source = new EventSource('{% url "photoresistor_stream" %}');
     console.log("created event source")
     source.onmessage = function(event) {
-    //   if (!streamingActive) {
-    //     source.close();
-    //     return;
-    //   }
-      var lightValue = parseInt(event.data);
+      let lightValue = parseInt(event.data);
       console.log(lightValue)
       // Update the chart and add the data point
       chart.data.labels.push('');
@@ -189,9 +183,6 @@ function updateChart() {
   } 
 }
 
-// Generate an empty chart initially
-// generateChart();
-
 // Function to stop streaming and disable further updates
 function stopStreaming() {
 
@@ -203,8 +194,6 @@ function stopStreaming() {
     },
     body: 'action=stop'
   })
-  streamingActive = false;
-  console.log("closing source")
   source.close();
 }
 
