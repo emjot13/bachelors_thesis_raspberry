@@ -1,20 +1,17 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
+__BUZZER_PIN = 23
 
-
-def beep(interval_sec = 0.5, times = 2):
+def intermittent_beep(beep_duration_in_seconds: float = 0.5, seconds_between_beeps: float = 0.5, times: int = 2):
     GPIO.setmode(GPIO.BCM)
-    buzzer = 23
-    GPIO.setup(buzzer, GPIO.OUT)
+    GPIO.setup(__BUZZER_PIN, GPIO.OUT)
 
     for _ in range(times):
-        GPIO.output(buzzer, GPIO.HIGH)
-        sleep(interval_sec) 
-        GPIO.output(buzzer, GPIO.LOW)
-        sleep(interval_sec)
-    GPIO.cleanup()
+        GPIO.output(__BUZZER_PIN, GPIO.HIGH)
+        sleep(beep_duration_in_seconds) 
+        GPIO.output(__BUZZER_PIN, GPIO.LOW)
+        sleep(seconds_between_beeps)
 
 
 
-# beep()

@@ -134,17 +134,17 @@ distance_sensor_red_led_service = DistanceSensorRedLedService()
 def start_detecting(request):
     photoresistor_red_led_service.initialize_photoresistor_red_led()
     photoresistor_red_led_service.start_photoresistor_red_led()
-    print("non-blocking 1")
+    # print("non-blocking 1")
 
     distance_sensor_red_led_service.initialize_distance_sensor_red_led()
     distance_sensor_red_led_service.start_distance_sensor_red_led()
-    # detector_service.start_detector()
+    detector_service.start_detector()
     return redirect(start)
 
 def stop_detecting(request):
     photoresistor_red_led_service.stop_photoresistor_red_led()
     distance_sensor_red_led_service.stop_distance_sensor_red_led()
-    # detector_service.stop_detector()
+    detector_service.stop_detector()
     return redirect(start)
 
 

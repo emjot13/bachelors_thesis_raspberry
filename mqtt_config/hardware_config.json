@@ -1,7 +1,7 @@
 {
     "photoresistor": {
-        "min": "5000",
-        "max": "15000"
+        "min": "0",
+        "max": "0"
     },
     "distance_sensor": {
         "min": "0",

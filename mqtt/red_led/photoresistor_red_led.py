@@ -41,7 +41,7 @@ class PhotoresistorRedLed():
 
     def stop_listening(self):
         print("photo stop")
-        GPIO.output(self.__PIN, False)
+        GPIO.output(self.__PIN, GPIO.LOW)
         self.__processing = False  # Disable message processing
         if self.thread:
             self.thread.join()  # Wait for the thread to complete
@@ -57,7 +57,7 @@ class PhotoresistorRedLed():
 
         message_decoded = json.loads(message.payload.decode("utf-8"))
         value = message_decoded.get(self.__INFO, self.__DEFAULT_COUNT_VALUE)
-        print("photo: ", value)
+        # print("photo: ", value)
         if not self.__min_threshold <= value <= self.__max_threshold:
             GPIO.output(self.__PIN, GPIO.HIGH)
         else:
@@ -73,8 +73,8 @@ class PhotoresistorRedLed():
 
         self.client.loop_stop()  
 
-    def __del__(self):
-        GPIO.cleanup()
+    # def __del__(self):
+    #     GPIO.cleanup()
 
 
 
