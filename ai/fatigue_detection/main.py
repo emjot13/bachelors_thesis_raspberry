@@ -40,24 +40,21 @@ class FatigueDetector:
 
 
     def __analyze_frame(self, rects: Tuple[int, int, int, int], gray_image: any) -> None:
-        for (x, y, w, h) in rects:
+        for (bottom_left_corner_x, bottom_left_corner_y, width, height) in rects:
+            bottom_left_corner = (bottom_left_corner_x, bottom_left_corner_y)
+            top_right_corner = (bottom_left_corner_x + width, bottom_left_corner_y + height)
+            rect_coordinates = (*bottom_left_corner, *top_right_corner)
+            eyes_aspect_ratio = self.landmarks.eyes_aspect_ratio(gray_image, rect_coordinates)
+            lips_distance = self.landmarks.lip_distance(gray_image, rect_coordinates)
+
             print("frame_counter: ", self.frame_counter)
-            rect = (x, y, x + w, y + h)
-            eyes_aspect_ratio = self.landmarks.eyes_aspect_ratio(gray_image, rect)
-            lips_distance = self.landmarks.lip_distance(gray_image, rect)
+
             print("----------- EAR --------------")
             print(eyes_aspect_ratio)
             print("----------- EAR --------------")
 
-            
-                        
             was_sleeping = self.is_sleeping and eyes_aspect_ratio > self.eye_aspect_ratio_threshold
             if was_sleeping:
-                with self.buzzer_lock:
-                    if self.buzzer_thread is None or not self.buzzer_thread.is_alive():
-                        self.buzzer_thread = threading.Thread(target = intermittent_beep)
-                        self.buzzer_thread.start()
-                        print("started beep thread")
                 print("BEEEEP BEEEEP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 self.sleeping_counter += 1
                 self.frame_counter = 0
@@ -71,6 +68,12 @@ class FatigueDetector:
             
             if self.frame_counter >= self.closed_eyes_threshold_fps:
                 self.is_sleeping = True
+                with self.buzzer_lock:
+                    if self.buzzer_thread is None or not self.buzzer_thread.is_alive():
+                        self.buzzer_thread = threading.Thread(target = intermittent_beep)
+                        self.buzzer_thread.start()
+                        print("started beep thread")               
+
 
             is_just_yawning = not self.is_sleeping and lips_distance > self.yawn_threshold
             if is_just_yawning:
@@ -99,8 +102,6 @@ class FatigueDetector:
             self.__analyze_frame(rects, gray_image)
 
         vs.stop()
-
-
 
 
     def start(self):

@@ -128,7 +128,6 @@ def start(request):
 
 
 detector_service = FatigueDetectorService()
-
 photoresistor_red_led_service = PhotoresistorRedLedService()
 distance_sensor_red_led_service = DistanceSensorRedLedService()
 def start_detecting(request):
