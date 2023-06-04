@@ -12,7 +12,6 @@ import database.client_games as database_games
 import utils.main as utils
 import json
 
-from .services.fatigue_service import FatigueDetectorService
 # from  .fatigue_service import FatigueDetectorService
 import hardware.distance as distance
 import hardware.photoresistor as room_light
@@ -21,9 +20,14 @@ import time
 import datetime
 import paho.mqtt.client as mqtt
 from django.views.decorators.http import condition
+# from mqtt.led import LedLight
 # from mqtt_v2.photoresistor_config import MqttSubscriber
+from .services.fatigue_service import FatigueDetectorService
 from .services.photoresistor_config_service import PhotoresistorConfigService
 from .services.distance_sensor_config_service import DistanceSensorConfigService
+from .services.photoresistor_red_light_service import PhotoresistorRedLedService
+from .services.distance_sensor_red_led_service import DistanceSensorRedLedService
+
 
 from .services.utils.hardware_config import min_max_values_for_hardware_component, modify_min_max_values_for_hardware_component, HardwareComponent 
 
@@ -68,6 +72,7 @@ def photoresistor_config(request):
     return render(request, 'photoresistor_config.html', {"current_min_threshold": current_min_threshold, "current_max_threshold": current_max_threshold})
 
 
+
 # photoresistor_config_service = PhotoresistorConfigService()
 distance_sensor_config_service = DistanceSensorConfigService()
 def distance_sensor_stream(request):
@@ -81,6 +86,8 @@ def distance_sensor_stream(request):
             yield 'data: %s\n\n' % value       
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
 
+
+# red_light_service = RedLightForDistanceSensorService()
 def distance_sensor_config(request):
     if request.method == 'POST':
         data = request.POST
@@ -90,18 +97,23 @@ def distance_sensor_config(request):
 
         print(action, min_threshold)
         if action == 'start':
+            # red_light_service.initialize_led_light()
+            # red_light_service.start_led_light()
+
             distance_sensor_config_service.initialize_distance_sensor_config()
             distance_sensor_config_service.start_distance_sensor_config()
 
         if action == 'stop':
             distance_sensor_config_service.stop_distance_sensor_config()
+            # red_light_service.stop_led_light()
+
 
         if min_threshold and max_threshold:
             print(min_threshold, max_threshold)
             modify_min_max_values_for_hardware_component(HardwareComponent.Distance_sensor, min_threshold, max_threshold)
             return render(request, 'distance_sensor_config.html', {"current_min_threshold": min_threshold, "current_max_threshold": max_threshold})
 
-    current_min_threshold, current_max_threshold = min_max_values_for_hardware_component(HardwareComponent.Photoresistor)
+    current_min_threshold, current_max_threshold = min_max_values_for_hardware_component(HardwareComponent.Distance_sensor)
     return render(request, 'distance_sensor_config.html', {"current_min_threshold": current_min_threshold, "current_max_threshold": current_max_threshold})
 
 
@@ -116,12 +128,21 @@ def start(request):
 
 
 detector_service = FatigueDetectorService()
-
+photoresistor_red_led_service = PhotoresistorRedLedService()
+distance_sensor_red_led_service = DistanceSensorRedLedService()
 def start_detecting(request):
+    photoresistor_red_led_service.initialize_photoresistor_red_led()
+    photoresistor_red_led_service.start_photoresistor_red_led()
+    # print("non-blocking 1")
+
+    distance_sensor_red_led_service.initialize_distance_sensor_red_led()
+    distance_sensor_red_led_service.start_distance_sensor_red_led()
     detector_service.start_detector()
     return redirect(start)
 
 def stop_detecting(request):
+    photoresistor_red_led_service.stop_photoresistor_red_led()
+    distance_sensor_red_led_service.stop_distance_sensor_red_led()
     detector_service.stop_detector()
     return redirect(start)
 

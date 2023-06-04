@@ -33,9 +33,8 @@ class UltrasonicSensor:
         GPIO.setup(self.echo_pin, GPIO.IN)
 
     def __connect_to_mqtt(self):
-        mqtt_client = mqtt.Client(CLIENT_NAME)
-        mqtt_client.connect(MQTT_BROKER) 
-        self.mqtt_client = mqtt_client
+        self.mqtt_client = mqtt.Client(CLIENT_NAME)
+        self.mqtt_client.connect(MQTT_BROKER) 
 
 
     def __publish_distance(self, distance_in_cm):
@@ -73,9 +72,10 @@ class UltrasonicSensor:
             time.sleep(TIME_BETWEEN_MEASUREMENTS)
 
     def start_measurement(self):
-        self.measuring = True
-        t = threading.Thread(target=self.__measure_distance)
-        t.start()
+        if not self.measuring:
+            self.measuring = True
+            t = threading.Thread(target=self.__measure_distance)
+            t.start()
 
     
     def stop_measurement(self):

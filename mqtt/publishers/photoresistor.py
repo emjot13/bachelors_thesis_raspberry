@@ -63,7 +63,4 @@ class Photoresistor:
 
 
 sensor = Photoresistor(photoresistor_pin=6)
-
 sensor.start_measurement()
-# time.sleep(2000)
-# sensor.stop_measurement()

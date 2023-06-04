@@ -35,17 +35,18 @@ class Buzzer:
     def start_listening(self):
         self.client.subscribe(TOPIC)
         self.client.on_message=self.__on_message 
-        self.client.loop_start()        
+        self.client.loop_forever()        
 
     def stop_listening(self):
         self.client.loop_stop()
 
     def __on_message(self, client, userdata, message):
-        message_decoded = json.loads(message.payload.decode("utf-8"))
-        distance = message_decoded.get(INFO, 60)
-        print(distance)
-        if not (DISTANCE_FROM_SCREEN_LOW_IN_CM < distance < DISTANCE_FROM_SCREEN_HIGH_IN_CM):
-            print("here")
+        while self.start_listening:
+            message_decoded = json.loads(message.payload.decode("utf-8"))
+            distance = message_decoded.get(INFO, 60)
+            print(distance)
+            if not (DISTANCE_FROM_SCREEN_LOW_IN_CM < distance < DISTANCE_FROM_SCREEN_HIGH_IN_CM):
+                print("here")
 
     def __del__(self):
         GPIO.cleanup()
@@ -55,12 +56,6 @@ class Buzzer:
 buzzer = Buzzer(23)
 buzzer.start_listening()
 
-def stop_buzzer():
-    sleep(3)
-    buzzer.stop_listening()
-
-stop_thread = threading.Thread(target=stop_buzzer)
-stop_thread.start()
 
 
 # sleep(1)

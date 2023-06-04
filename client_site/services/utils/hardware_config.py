@@ -1,6 +1,6 @@
 import json
 import enum
-from typing import Union, Tuple, Dict
+from typing import Tuple, Dict
 
 
 __HARDWARE_CONFIG_PATH = "./mqtt_config/hardware_config.json"
@@ -18,7 +18,7 @@ class HardwareComponent(enum.Enum):
 
 
 
-def modify_min_max_values_for_hardware_component(hardware: HardwareComponent, min_threshold: Union[float, int], max_threshold: Union[float, int]) -> None:
+def modify_min_max_values_for_hardware_component(hardware: HardwareComponent, min_threshold: int, max_threshold: int) -> None:
     with open(__HARDWARE_CONFIG_PATH, __FILE_OPEN_MODE) as file:
         data = json.load(file)
 
@@ -32,11 +32,11 @@ def modify_min_max_values_for_hardware_component(hardware: HardwareComponent, mi
         file.truncate()
 
 
-def min_max_values_for_hardware_component(hardware: HardwareComponent):
+def min_max_values_for_hardware_component(hardware: HardwareComponent) -> Tuple[int, int]:
     with open(__HARDWARE_CONFIG_PATH, __FILE_OPEN_MODE) as file:
-        data: Dict[str, Dict[str, Union[float, int]]] = json.load(file)
+        data = json.load(file)
 
-    min_threshold = data[hardware.value]["min"] 
-    max_threshold = data[hardware.value]["max"]
+    min_threshold = int(data[hardware.value]["min"]) 
+    max_threshold = int(data[hardware.value]["max"])
 
     return min_threshold, max_threshold

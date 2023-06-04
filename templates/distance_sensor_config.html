@@ -3,8 +3,13 @@
 
 <html>
 <head>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+
   <style>
-    /* Center align elements */
+    
     body, .center {
       display: flex;
       flex-direction: column;
@@ -26,7 +31,6 @@
       margin-bottom: 60px;
     }
 
-    /* Style the buttons */
     button {
       margin: 0 5px;
       padding: 10px 15px;
@@ -38,7 +42,6 @@
       font-size: 16px;
     }
 
-    /* Style the input fields */
     input[type="number"] {
       padding: 5px;
       width: 100px;
@@ -52,13 +55,15 @@
 <div id="current_values">
   <h3> Current minimum threshold: {{ current_min_threshold }}</h3>
   <h3> Current maximum threshold: {{ current_max_threshold }}</h3>
-  <p>If the light intensity is lower or higher, you will see a red led light up</p>
+  <p>The recomended use of this feature is to set the distance sensor so it's the same distance from your face
+    as your screen, this way it will tell you if you are keeping the correct distance from it.
+  </p>
 
 </div>
 
 
   <div id="description">
-    <h1>Getting photoresistor values</h1>
+    <h1>Getting distance sensor values</h1>
   </div>
 
   <div>
@@ -96,7 +101,6 @@
 var chart;
 
 function generateEmptyChart() {
-  console.log("generating empty chart")
   var ctx = document.getElementById('chartContainer').getContext('2d');
   chart = new Chart(ctx, {
     type: 'line',
@@ -122,23 +126,18 @@ function generateEmptyChart() {
         }
       }
     }
-  });;
+  });
 
 }
-
 generateEmptyChart()
 var source;
-// Function to generate the chart
+
 function updateChart() {
   // EventSource to receive SSE updates
   if (typeof(EventSource) !== 'undefined') {
     source = new EventSource('{% url "distance_sensor_stream" %}');
-    console.log("created event source")
+
     source.onmessage = function(event) {
-    //   if (!streamingActive) {
-    //     source.close();
-    //     return;
-    //   }
       var lightValue = parseInt(event.data);
       console.log(lightValue)
       // Update the chart and add the data point
@@ -161,9 +160,6 @@ function updateChart() {
   } 
 }
 
-// Generate an empty chart initially
-// generateChart();
-
 // Function to stop streaming and disable further updates
 function stopStreaming() {
 
@@ -180,6 +176,6 @@ function stopStreaming() {
   source.close();
 }
 
-  </script>
+</script>
 </body>
 </html>
