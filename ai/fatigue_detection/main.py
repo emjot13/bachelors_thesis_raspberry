@@ -75,7 +75,7 @@ class FatigueDetector:
             self.__global_yawning_counter += 1      
 
 
-    def __analyze_frame(self, rects: Tuple[int, int, int, int], gray_image: Tuple[int, int]) -> None:
+    def __analyze_frame(self, rects: Tuple[int, int, int, int], gray_image) -> None:
         for (bottom_left_corner_x, bottom_left_corner_y, width, height) in rects:
             bottom_left_corner = (bottom_left_corner_x, bottom_left_corner_y)
             top_right_corner = (bottom_left_corner_x + width, bottom_left_corner_y + height)
