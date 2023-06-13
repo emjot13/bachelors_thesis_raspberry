@@ -37,7 +37,7 @@ class FatigueDetector:
         self.__buzzer_lock = threading.Lock()
 
     def __write_to_database_every_x_seconds(self) -> None:
-        while True:
+        while self.__running:
             time.sleep(self.__database_writes_frequency_in_seconds)
             database.insert_data(self.__global_yawning_counter, self.__global_sleeping_counter)
 
